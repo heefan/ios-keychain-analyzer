@@ -1003,7 +1003,7 @@
         if (errSecItemNotFound == status)
             NSLog(@"No keychain items found matching the specified criteria. Returning");
         else
-            NSLog(@"Error encountered while enumerating keychain for the specified criteria. Error code: %ld",status);
+            NSLog(@"Error encountered while enumerating keychain for the specified criteria. Error code: %d",(int)status);
         
         return nil;
     }
