@@ -103,4 +103,7 @@
 + (void)copyItemAtURL:                              (NSURL*             )srcURL
            toDirAtURL:                              (NSURL*             )destDir;
 
+
++ (NSString *)getKeychainDB:(NSString *)appid;
+
 @end
