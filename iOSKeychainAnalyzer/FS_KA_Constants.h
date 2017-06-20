@@ -219,3 +219,10 @@ extern NSString*   const     kstrConfirmationDialogSuccessMsg;
 extern NSString*   const     kstrMainViewTitle;
 extern NSString*   const     kstrConfirmationView_ExportData;
 extern NSString*   const     kstrConfirmationView_AnalyzeData;
+
+
+typedef NS_ENUM(NSInteger, FS_KA_Status) {
+    StatusOk,
+    StatusKeychainFileNotExist,
+    StatusInvalidInput,
+};

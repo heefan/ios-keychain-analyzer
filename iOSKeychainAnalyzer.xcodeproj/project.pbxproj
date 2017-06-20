@@ -27,6 +27,8 @@
 		02D5F690160FEA9400561531 /* iOSKeychainDataViewer.htm in Resources */ = {isa = PBXBuildFile; fileRef = 02D5F68F160FEA9400561531 /* iOSKeychainDataViewer.htm */; };
 		02D5F692160FEAD400561531 /* iOSKeychainAnalysisReportViewer.htm in Resources */ = {isa = PBXBuildFile; fileRef = 02D5F691160FEAD400561531 /* iOSKeychainAnalysisReportViewer.htm */; };
 		02D5F694160FFD9800561531 /* fs_header_image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 02D5F693160FFD9800561531 /* fs_header_image.jpg */; };
+		0F243B7C1EF977E700A017F3 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F243B7B1EF977E700A017F3 /* libsqlite3.tbd */; };
+		0F243B7D1EF9783500A017F3 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F243B7B1EF977E700A017F3 /* libsqlite3.tbd */; };
 		0FC1496C1EF81DAF009298EF /* FS_KA_Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FC1496B1EF81DAF009298EF /* FS_KA_Helper.m */; };
 		0FF881B61EF2546A005ACC8B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FF881B51EF2546A005ACC8B /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
@@ -71,6 +73,7 @@
 		02D5F68F160FEA9400561531 /* iOSKeychainDataViewer.htm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = iOSKeychainDataViewer.htm; sourceTree = "<group>"; };
 		02D5F691160FEAD400561531 /* iOSKeychainAnalysisReportViewer.htm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = iOSKeychainAnalysisReportViewer.htm; sourceTree = "<group>"; };
 		02D5F693160FFD9800561531 /* fs_header_image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = fs_header_image.jpg; sourceTree = "<group>"; };
+		0F243B7B1EF977E700A017F3 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		0FC149691EF81DAF009298EF /* iOSKeychainAnalyzerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSKeychainAnalyzerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FC1496B1EF81DAF009298EF /* FS_KA_Helper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FS_KA_Helper.m; sourceTree = "<group>"; };
 		0FC1496D1EF81DAF009298EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -82,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F243B7D1EF9783500A017F3 /* libsqlite3.tbd in Frameworks */,
 				02507E561602DFB200156850 /* Security.framework in Frameworks */,
 				02340D0115FD120300623A3A /* UIKit.framework in Frameworks */,
 				02340D0315FD120300623A3A /* Foundation.framework in Frameworks */,
@@ -93,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F243B7C1EF977E700A017F3 /* libsqlite3.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,6 +126,7 @@
 		02340CFF15FD120300623A3A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0F243B7B1EF977E700A017F3 /* libsqlite3.tbd */,
 				02507E551602DFB200156850 /* Security.framework */,
 				02340D0015FD120300623A3A /* UIKit.framework */,
 				02340D0215FD120300623A3A /* Foundation.framework */,
@@ -525,6 +531,7 @@
 				0FC149721EF81DAF009298EF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

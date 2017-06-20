@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "FS_KA_Constants.h"
 #import "FS_KA_ConfirmationDialogViewController.h"
 #import "FS_KA_AboutDialogViewController.h"
 
@@ -18,28 +19,32 @@
     NSMutableDictionary *keychainAnalysisResults;
 }
 
+@property (weak, nonatomic) IBOutlet UITextField *deviceIdTextField;
+@property (weak, nonatomic) IBOutlet UITextField *appIdTextField;
+@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
+
 #pragma mark - UI Events
-- (IBAction)exportKeychainData: (id)sender;	
+- (IBAction)exportKeychainData: (id)sender;
 - (IBAction)analyzeKeychainData:(id)sender;
 - (IBAction)aboutKeychainAnalyzer:(id)sender;
 
 #pragma mark - Top Level Functions
-- (void)            loadKeychain;
-- (void)            runKeychainAnalysis;
+- (FS_KA_Status)loadKeychain;
+- (void)runKeychainAnalysis;
 
 #pragma mark - Load Generic Passwords
-- (void)            loadGenericPasswords;
-- (NSDictionary*)   createKeychainQueryForGenericPasswords;
-- (void)            addGenericPasswords:                        (NSArray*               )resultItems;
-- (void)            addGenericPasswordAttributesFrom:           (NSDictionary*          )dictSecItemAttributes
-                                        toDictionary:           (NSMutableDictionary*   )resultDictionary;
+- (void)loadGenericPasswords;
+- (NSDictionary*)createKeychainQueryForGenericPasswords;
+- (void)addGenericPasswords:(NSArray*)resultItems;
+- (void)addGenericPasswordAttributesFrom:(NSDictionary *)dictSecItemAttributes
+                            toDictionary:(NSMutableDictionary *)resultDictionary;
 
 #pragma mark - Load Internet Passwords
-- (void)            loadInternetPasswords;
-- (NSDictionary*)   createKeychainQueryForInternetPasswords;
-- (void)            addInternetPasswords:                       (NSArray*               )resultItems;
-- (void)            addInternetPasswordAttributesFrom:          (NSDictionary *         )dictSecItemAttributes
-                                         toDictionary:          (NSMutableDictionary*   )resultDictionary;
+- (void)loadInternetPasswords;
+- (NSDictionary*)createKeychainQueryForInternetPasswords;
+- (void)addInternetPasswords:(NSArray *)resultItems;
+- (void)addInternetPasswordAttributesFrom:(NSDictionary *)dictSecItemAttributes
+                             toDictionary:(NSMutableDictionary *)resultDictionary;
 
 #pragma mark - Load Certificates
 - (void)            loadCertificates;

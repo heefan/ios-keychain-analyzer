@@ -104,6 +104,6 @@
            toDirAtURL:                              (NSURL*             )destDir;
 
 
-+ (NSString *)getKeychainDB:(NSString *)appid;
++ (NSString *)getKeychainDBwithDeviceId:(NSString *)devideId applicationId:(NSString *)appId;
 
 @end

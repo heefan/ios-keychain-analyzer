@@ -11,6 +11,9 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FS_KA_MainViewController">
             <connections>
+                <outlet property="appIdTextField" destination="gdg-NZ-jPZ" id="1Tp-Gj-Ug2"/>
+                <outlet property="deviceIdTextField" destination="TrL-yc-hzp" id="F2n-HU-yk1"/>
+                <outlet property="messageLabel" destination="GM8-DQ-rYL" id="XYE-6a-2qO"/>
                 <outlet property="view" destination="1" id="7"/>
             </connections>
         </placeholder>
@@ -19,23 +22,8 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6">
-                    <rect key="frame" x="24" y="190" width="280" height="37"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                    <state key="normal" title="Analyze Keychain Data">
-                        <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    </state>
-                    <state key="highlighted">
-                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    </state>
-                    <connections>
-                        <action selector="analyzeKeychainData:" destination="-1" eventType="touchUpInside" id="9"/>
-                    </connections>
-                </button>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="10">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="10">
                     <rect key="frame" x="20" y="359" width="280" height="37"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                     <state key="normal" title="About">
                         <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -47,9 +35,36 @@
                         <action selector="aboutKeychainAnalyzer:" destination="-1" eventType="touchUpInside" id="11"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5">
-                    <rect key="frame" x="16" y="138" width="280" height="37"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GM8-DQ-rYL">
+                    <rect key="frame" x="27" y="311" width="273" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="M7c-Xd-VH0"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6">
+                    <rect key="frame" x="20" y="226" width="280" height="37"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="37" id="01c-4c-8NV"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                    <state key="normal" title="Analyze Keychain Data">
+                        <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <state key="highlighted">
+                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="analyzeKeychainData:" destination="-1" eventType="touchUpInside" id="9"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5">
+                    <rect key="frame" x="20" y="181" width="280" height="37"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="37" id="YLS-C0-QDM"/>
+                    </constraints>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                     <state key="normal" title="Export Keychain Data">
                         <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -61,8 +76,58 @@
                         <action selector="exportKeychainData:" destination="-1" eventType="touchUpInside" id="8"/>
                     </connections>
                 </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Device ID:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="roy-0o-D76">
+                    <rect key="frame" x="27" y="96" width="78" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="TrL-yc-hzp">
+                    <rect key="frame" x="119" y="87" width="174" height="30"/>
+                    <nil key="textColor"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                </textField>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="gdg-NZ-jPZ">
+                    <rect key="frame" x="119" y="135" width="174" height="30"/>
+                    <nil key="textColor"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                </textField>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="App ID:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z1S-Ql-NH0">
+                    <rect key="frame" x="27" y="140" width="78" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="6" firstAttribute="top" secondItem="5" secondAttribute="bottom" constant="8" symbolic="YES" id="4GH-NQ-rFG"/>
+                <constraint firstItem="roy-0o-D76" firstAttribute="top" secondItem="1" secondAttribute="top" constant="96" id="5Cw-JU-yQR"/>
+                <constraint firstItem="TrL-yc-hzp" firstAttribute="leading" secondItem="gdg-NZ-jPZ" secondAttribute="leading" id="63j-K6-ILR"/>
+                <constraint firstItem="z1S-Ql-NH0" firstAttribute="leading" secondItem="GM8-DQ-rYL" secondAttribute="leading" id="BrJ-Rc-oTP"/>
+                <constraint firstItem="roy-0o-D76" firstAttribute="trailing" secondItem="z1S-Ql-NH0" secondAttribute="trailing" id="CHf-Ts-xX6"/>
+                <constraint firstItem="roy-0o-D76" firstAttribute="bottom" secondItem="TrL-yc-hzp" secondAttribute="bottom" id="D5b-fh-3Z2"/>
+                <constraint firstItem="roy-0o-D76" firstAttribute="leading" secondItem="z1S-Ql-NH0" secondAttribute="leading" id="DRW-jg-CRi"/>
+                <constraint firstAttribute="bottom" secondItem="10" secondAttribute="bottom" constant="20" id="EOP-PU-fwF"/>
+                <constraint firstItem="GM8-DQ-rYL" firstAttribute="trailing" secondItem="10" secondAttribute="trailing" id="LXn-uH-eJ4"/>
+                <constraint firstItem="GM8-DQ-rYL" firstAttribute="top" secondItem="6" secondAttribute="bottom" constant="48" id="R8H-Z0-deD"/>
+                <constraint firstItem="TrL-yc-hzp" firstAttribute="trailing" secondItem="gdg-NZ-jPZ" secondAttribute="trailing" id="V8D-4N-bXW"/>
+                <constraint firstItem="gdg-NZ-jPZ" firstAttribute="top" secondItem="TrL-yc-hzp" secondAttribute="bottom" constant="18" id="WHz-0i-zz8"/>
+                <constraint firstItem="TrL-yc-hzp" firstAttribute="leading" secondItem="roy-0o-D76" secondAttribute="trailing" constant="14" id="XAr-D7-hvX"/>
+                <constraint firstItem="5" firstAttribute="top" secondItem="z1S-Ql-NH0" secondAttribute="bottom" constant="20" id="Y3a-gq-bjo"/>
+                <constraint firstItem="z1S-Ql-NH0" firstAttribute="centerY" secondItem="gdg-NZ-jPZ" secondAttribute="centerY" id="eQ8-0L-LZ7"/>
+                <constraint firstItem="5" firstAttribute="leading" secondItem="6" secondAttribute="leading" id="eoa-kz-pat"/>
+                <constraint firstItem="6" firstAttribute="leading" secondItem="10" secondAttribute="leading" id="fca-Q6-hnw"/>
+                <constraint firstItem="roy-0o-D76" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="27" id="fvI-ai-2CU"/>
+                <constraint firstItem="5" firstAttribute="trailing" secondItem="6" secondAttribute="trailing" id="iqp-Us-TuY"/>
+                <constraint firstItem="10" firstAttribute="top" secondItem="GM8-DQ-rYL" secondAttribute="bottom" constant="27" id="jKn-oz-yOh"/>
+                <constraint firstAttribute="trailing" secondItem="TrL-yc-hzp" secondAttribute="trailing" constant="27" id="nCP-t5-aAJ"/>
+                <constraint firstItem="5" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" id="sRN-N3-uOG"/>
+                <constraint firstItem="6" firstAttribute="trailing" secondItem="GM8-DQ-rYL" secondAttribute="trailing" id="xMS-OB-xP7"/>
+                <constraint firstItem="5" firstAttribute="centerX" secondItem="1" secondAttribute="centerX" id="zuF-XN-WfS"/>
+            </constraints>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
         </view>

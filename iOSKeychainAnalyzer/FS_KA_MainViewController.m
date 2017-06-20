@@ -11,6 +11,7 @@
 #import "FS_KA_MainViewController.h"
 #import "FS_KA_Helper.h"
 #import "FS_KA_Constants.h"
+#import "sqlite3.h"
 
 @interface FS_KA_MainViewController ()
 
@@ -71,7 +72,8 @@
     
     if (NO == bIsKeychainLoaded)
     {
-        [self loadKeychain];
+        if(StatusOk != [self loadKeychain])
+            return ;
     }
 
     NSString* strKeychainDataJSONP = [self convertKeychainDataToJSONP];
@@ -102,7 +104,8 @@
 
     if (NO == bIsKeychainLoaded)
     {
-        [self loadKeychain];
+        if (StatusOk != [self loadKeychain])
+            return;
     }
 
     [self runKeychainAnalysis];
@@ -142,10 +145,55 @@
 }
 
 #pragma mark - Top Level Functions
-- (void)loadKeychain
+- (FS_KA_Status)loadKeychain
 {
+    if (_appIdTextField.text.length == 0) {
+        _messageLabel.text = @"App ID cannot be empty";
+        return StatusInvalidInput;
+    }
+    
+    if (_deviceIdTextField.text.length == 0) {
+        _messageLabel.text = @"Device ID cannot be empty";
+        return StatusInvalidInput;
+    }
+    
+    NSString *databasePath = [FS_KA_Helper getKeychainDBwithDeviceId:@"" applicationId:@""];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    if (![fileManager fileExistsAtPath:databasePath]){
+        _messageLabel.text = @"Keychain file does not exist";
+        return StatusKeychainFileNotExist;
+    }
+    
+    // open keychain database
+    const char *dbpath = [databasePath UTF8String];
+    sqlite3 *keychainDB;
+    sqlite3_stmt *statement;
+    
+    if (sqlite3_open(dbpath, &keychainDB) == SQLITE_OK)
+    {
+        const char *query_stmt = "SELECT DISTINCT agrp FROM genp UNION SELECT DISTINCT agrp FROM inet";
+        
+        if (sqlite3_prepare_v2(keychainDB, query_stmt, -1, &statement, NULL) == SQLITE_OK)
+        {
+            while(sqlite3_step(statement) == SQLITE_ROW)
+            {
+                NSString *group = [[NSString alloc] initWithUTF8String:(const char *) sqlite3_column_text(statement, 0)];
+                NSLog(@"group: %@", group);
+                
+            }
+            sqlite3_finalize(statement);
+        }
+        sqlite3_close(keychainDB);
+    }
+ 
+    
+    
+    
+    
     allKeychainItems = [[NSMutableDictionary alloc]initWithCapacity:kTypesOfKeychainItems];
-   
+ 
+    
     [self loadGenericPasswords];
     
     [self loadInternetPasswords];
@@ -158,7 +206,7 @@
     
     bIsKeychainLoaded = YES;
     
-    return;
+    return StatusOk;
 }
 
 - (void)runKeychainAnalysis
@@ -368,7 +416,7 @@
 
 - (void) addCertificates:(NSArray*)resultItems
 {
-    NSMutableArray*         keychainCertificates            = [[NSMutableArray alloc]       initWithCapacity:kInitialNumOfCertificates];
+    NSMutableArray *keychainCertificates = [[NSMutableArray alloc] initWithCapacity:kInitialNumOfCertificates];
     
     for (unsigned int uiIndex = 0; uiIndex < [resultItems count]; uiIndex++)
     {
@@ -546,10 +594,10 @@
 {
     NSDictionary *dictQueryParams = [NSDictionary dictionaryWithObjectsAndKeys:
                                      (__bridge id)kSecClassIdentity,     (__bridge id)kSecClass,
-                                     (__bridge id)kSecMatchLimitAll,            (__bridge id)kSecMatchLimit,
-                                     (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnAttributes,
-                                     (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnData,
-                                     (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnRef,
+                                     (__bridge id)kSecMatchLimitAll,     (__bridge id)kSecMatchLimit,
+                                     (__bridge id)kCFBooleanTrue,        (__bridge id)kSecReturnAttributes,
+                                     (__bridge id)kCFBooleanTrue,        (__bridge id)kSecReturnData,
+                                     (__bridge id)kCFBooleanTrue,        (__bridge id)kSecReturnRef,
                                      nil];
     
     return dictQueryParams;

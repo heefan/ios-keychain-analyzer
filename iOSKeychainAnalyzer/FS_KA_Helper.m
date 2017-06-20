@@ -973,9 +973,9 @@ static NSArray      *sInsecurePorts                     = nil;
 
 
 #pragma mark Path of keychain in simulator
-+ (NSString *)getKeychainDB:(NSString *)deviceId appId:(NSString *)appId
++ (NSString *)getKeychainDBwithDeviceId:(NSString *)devideId applicationId:(NSString *)appId
 {
-    return [@"~/Library/Developer/CoreSimulator/Devices/" stringByAppendingFormat:@"%@/data/Containers/Bundle/Application/%@/iOSKeychainAnalyzer.app/iOSKeychainAnalyzer", deviceId, appId];
+    return [@"~/Library/Developer/CoreSimulator/Devices/" stringByAppendingFormat:@"%@/data/Containers/Bundle/Application/%@/iOSKeychainAnalyzer.app/iOSKeychainAnalyzer/keychain-2-debug.db", devideId, appId];
 }
 
 

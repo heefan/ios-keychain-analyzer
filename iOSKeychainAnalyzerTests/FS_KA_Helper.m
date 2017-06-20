@@ -26,7 +26,7 @@
 
 - (void)test_getKeychainDB
 {
-    NSString * dummy = [FS_KA_Helper getKeychainDB:@"1234135"];
+    NSString * dummy = [FS_KA_Helper getKeychainDBwithDeviceId:@"12341234" applicationId:@"1242134"];
     NSLog(@"%@", dummy);
 }
 
