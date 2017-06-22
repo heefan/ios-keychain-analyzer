@@ -32,9 +32,9 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    
+
     //[self setTitle:kstrMainViewTitle];
-    
+
     bIsKeychainLoaded = NO;
 }
 
@@ -54,7 +54,7 @@
     //Configure the navigation bar item
     //  Set the title
     //This method is called by the framework as it displays the view so you do not need to invoke it manually
-    
+
     if (nil == uiNavItem)
     {
         uiNavItem = [super navigationItem];
@@ -64,12 +64,11 @@
     return uiNavItem;
 }
 
-
 #pragma mark - UI Events
 - (IBAction)exportKeychainData: (id)sender
 {
     BOOL bErrorOccured = NO;
-    
+
     if (NO == bIsKeychainLoaded)
     {
         if(StatusOk != [self loadKeychain])
@@ -94,7 +93,7 @@
             [self saveKeychainData:strKeychainDataJSONP toReportDir:dataDir];
         }
     }
-    
+
     [self launchConfirmationDialogForDataExport:bErrorOccured];
 }
 
@@ -140,89 +139,86 @@
     [aboutDialogController setDelegate:self];
 
     [[self navigationController]pushViewController:aboutDialogController animated:YES];
-    
+
     return;
 }
 
 #pragma mark - Top Level Functions
 - (FS_KA_Status)loadKeychain
 {
+#if 0
     if (_appIdTextField.text.length == 0) {
         _messageLabel.text = @"App ID cannot be empty";
         return StatusInvalidInput;
     }
-    
+
     if (_deviceIdTextField.text.length == 0) {
         _messageLabel.text = @"Device ID cannot be empty";
         return StatusInvalidInput;
     }
-    
+
     NSString *databasePath = [FS_KA_Helper getKeychainDBwithDeviceId:@"" applicationId:@""];
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    
+
     if (![fileManager fileExistsAtPath:databasePath]){
         _messageLabel.text = @"Keychain file does not exist";
         return StatusKeychainFileNotExist;
     }
-    
+
     // open keychain database
     const char *dbpath = [databasePath UTF8String];
     sqlite3 *keychainDB;
     sqlite3_stmt *statement;
-    
+
     if (sqlite3_open(dbpath, &keychainDB) == SQLITE_OK)
     {
         const char *query_stmt = "SELECT DISTINCT agrp FROM genp UNION SELECT DISTINCT agrp FROM inet";
-        
+
         if (sqlite3_prepare_v2(keychainDB, query_stmt, -1, &statement, NULL) == SQLITE_OK)
         {
             while(sqlite3_step(statement) == SQLITE_ROW)
             {
                 NSString *group = [[NSString alloc] initWithUTF8String:(const char *) sqlite3_column_text(statement, 0)];
                 NSLog(@"group: %@", group);
-                
+
             }
             sqlite3_finalize(statement);
         }
         sqlite3_close(keychainDB);
     }
- 
-    
-    
-    
-    
+#endif
+
     allKeychainItems = [[NSMutableDictionary alloc]initWithCapacity:kTypesOfKeychainItems];
- 
-    
+
     [self loadGenericPasswords];
-    
+
     [self loadInternetPasswords];
-    
+
     [self loadCertificates];
-    
+
     [self loadKeys];
-    
+
     [self loadIdentities];
-    
+
     bIsKeychainLoaded = YES;
-    
+
     return StatusOk;
 }
 
 - (void)runKeychainAnalysis
 {
     keychainAnalysisResults = [[NSMutableDictionary alloc]initWithCapacity:kNumofKeychainAnalysisChecks];
-    
+
     [self checkKeychainItemsForWeakPasswords];
-    
+
     [self checkKeychainItemsForWeakAuthScheme];
 
     [self checkKeychainItemsForWeakProtocols];
-    
+
     [self checkKeychainItemsForWeakKeys];
 
     [self checkKeychainItemsForInsecureAccessibility];
-    
+
     return;
 }
 
@@ -231,14 +227,14 @@
 - (void)loadGenericPasswords
 {
     NSDictionary* queryParamsGenericPasswords = [self createKeychainQueryForGenericPasswords];
-    
+
     NSArray* resultItems = [self searchKeychainUsingQuery:queryParamsGenericPasswords];
-    
+
     if (nil == resultItems) //Either no items found or an error occured. Either way do not proceed
         return;
-    
+
     [self addGenericPasswords:resultItems];
-    
+
     return;
 }
 
@@ -250,9 +246,9 @@
                                      (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnAttributes,
                                      (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnData,
                                      nil];
-    
+
     return dictQueryParams;
-    
+
 }
 
 - (void) addGenericPasswords:(NSArray*)resultItems
@@ -262,18 +258,18 @@
     for (unsigned int uiIndex = 0; uiIndex < [resultItems count]; uiIndex++)
     {
         NSMutableDictionary*    dictReadableSecItemAttributes   = [[NSMutableDictionary alloc]  initWithCapacity:kNumOfAttributesPerKeychainItem];
-        
+
         NSDictionary *dictSecItemAttributes = (NSDictionary *)([resultItems objectAtIndex:uiIndex]);
-                
+
         [self addCommonAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        
+
         [self addGenericPasswordAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        
+
         [keychainGenericPasswords addObject:dictReadableSecItemAttributes];
     }
-    
+
     [allKeychainItems setObject:keychainGenericPasswords forKey:kstrKeyGenericPasswords];
-    
+
     return;
 }
 
@@ -281,39 +277,38 @@
 {
     if(nil == dictSecItemAttributes) //nothing to add
         return;
-    
+
     if (0 >= [dictSecItemAttributes count])
         return; //nothing to add
-    
+
     if(nil == resultDictionary) //result dictionary is nil
         return;
-    
+
     NSString* strAccount        = [FS_KA_Helper getAccountForSecItem:dictSecItemAttributes];
     NSString* strService        = [FS_KA_Helper getServiceForSecItem:dictSecItemAttributes];
     NSString* strGeneric        = [FS_KA_Helper getGenericForSecItem:dictSecItemAttributes];
     NSString* strPassword       = [FS_KA_Helper getPasswordForSecItem:dictSecItemAttributes];
-    
+
     [resultDictionary setValue:strAccount   forKey:kstrKeyAccount];
     [resultDictionary setValue:strService   forKey:kstrKeyService];
     [resultDictionary setValue:strGeneric   forKey:kstrKeyGeneric];
     [resultDictionary setValue:strPassword  forKey:kstrKeyPassword];
-    
+
     return;
 }
-
 
 #pragma mark - Load Internet Passwords
 - (void)loadInternetPasswords
 {
     NSDictionary* queryParamsInternetPasswords = [self createKeychainQueryForInternetPasswords];
-    
+
     NSArray* resultItems = [self searchKeychainUsingQuery:queryParamsInternetPasswords];
-    
+
     if (nil == resultItems) //Either no items found or an error occured. Either way do not proceed
         return;
-    
+
     [self addInternetPasswords:resultItems];
-    
+
     return;
 }
 
@@ -325,30 +320,30 @@
                                      (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnAttributes,
                                      (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnData,
                                      nil];
-    
+
     return dictQueryParams;
-    
+
 }
 
 - (void) addInternetPasswords:(NSArray*)resultItems
 {
     NSMutableArray*         keychainInternetPasswords        = [[NSMutableArray alloc]       initWithCapacity:kInitialNumOfInternetPasswords];
-    
+
     for (unsigned int uiIndex = 0; uiIndex < [resultItems count]; uiIndex++)
     {
         NSMutableDictionary*    dictReadableSecItemAttributes   = [[NSMutableDictionary alloc]  initWithCapacity:kNumOfAttributesPerKeychainItem];
-        
+
         NSDictionary *dictSecItemAttributes = (NSDictionary *)([resultItems objectAtIndex:uiIndex]);
-        
+
         [self addCommonAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        
+
         [self addInternetPasswordAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        
+
         [keychainInternetPasswords addObject:dictReadableSecItemAttributes];
     }
-    
+
     [allKeychainItems setObject:keychainInternetPasswords forKey:kstrKeyInternetPasswords];
-    
+
     return;
 }
 
@@ -356,13 +351,13 @@
 {
     if(nil == dictSecItemAttributes) //nothing to add
         return;
-    
+
     if (0 >= [dictSecItemAttributes count])
         return; //nothing to add
-    
+
     if(nil == resultDictionary) //result dictionary is nil
         return;
-    
+
     NSString* strAccount        = [FS_KA_Helper getAccountForSecItem:dictSecItemAttributes];
     NSString* strSecDomain      = [FS_KA_Helper getSecurityDomainForSecItem:dictSecItemAttributes];
     NSString* strServer         = [FS_KA_Helper getServerForSecItem:dictSecItemAttributes];
@@ -371,7 +366,7 @@
     NSString* strPort           = [FS_KA_Helper getPortForSecItem:dictSecItemAttributes];
     NSString* strPath           = [FS_KA_Helper getPathForSecItem:dictSecItemAttributes];
     NSString* strPassword       = [FS_KA_Helper getPasswordForSecItem:dictSecItemAttributes];
-    
+
     [resultDictionary setValue:strAccount   forKey:kstrKeyAccount];
     [resultDictionary setValue:strSecDomain forKey:kstrKeyDomain];
     [resultDictionary setValue:strServer    forKey:kstrKeyServer];
@@ -380,23 +375,22 @@
     [resultDictionary setValue:strPort      forKey:kstrKeyPort];
     [resultDictionary setValue:strPath      forKey:kstrKeyPath];
     [resultDictionary setValue:strPassword  forKey:kstrKeyPassword];
-    
+
     return;
 }
-
 
 #pragma mark - Load Certificates
 - (void)loadCertificates
 {
     NSDictionary* queryParamsCertificates = [self createKeychainQueryForCertificates];
-    
+
     NSArray* resultItems = [self searchKeychainUsingQuery:queryParamsCertificates];
-    
+
     if (nil == resultItems) //Either no items found or an error occured. Either way do not proceed
         return;
-    
+
     [self addCertificates:resultItems];
-    
+
     return;
 }
 
@@ -409,32 +403,32 @@
                                      (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnData,
                                      (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnRef,
                                      nil];
-    
+
     return dictQueryParams;
-    
+
 }
 
 - (void) addCertificates:(NSArray*)resultItems
 {
     NSMutableArray *keychainCertificates = [[NSMutableArray alloc] initWithCapacity:kInitialNumOfCertificates];
-    
+
     for (unsigned int uiIndex = 0; uiIndex < [resultItems count]; uiIndex++)
     {
         NSMutableDictionary*    dictReadableSecItemAttributes   = [[NSMutableDictionary alloc]  initWithCapacity:kNumOfAttributesPerKeychainItem];
-        
+
         NSDictionary *dictSecItemAttributes = (NSDictionary *)([resultItems objectAtIndex:uiIndex]);
-        
+
         [self addCommonAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        
+
         [self addCertificateAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
 
         [self addCertificateSummaryForCertificateFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        
+
         [keychainCertificates addObject:dictReadableSecItemAttributes];
     }
-    
+
     [allKeychainItems setObject:keychainCertificates forKey:kstrKeyCertificates];
-    
+
     return;
 }
 
@@ -442,13 +436,13 @@
 {
     if(nil == dictSecItemAttributes) //nothing to add
         return;
-    
+
     if (0 >= [dictSecItemAttributes count])
         return; //nothing to add
-    
+
     if(nil == resultDictionary) //result dictionary is nil
         return;
-    
+
     NSString* strCertType =         [FS_KA_Helper getCertificateTypeForSecItem:dictSecItemAttributes];
     NSString* strCertEncoding =     [FS_KA_Helper getCertificateEncodingForSecItem:dictSecItemAttributes];
     NSString* strSerialNum =        [FS_KA_Helper getSerialNumberForSecItem:dictSecItemAttributes];
@@ -458,13 +452,13 @@
     //NSString* strValue =            [FS_KA_Helper getValueForSecItem:dictSecItemAttributes];
     //NSString* strSubject =          [FS_KA_Helper getSubjectForSecItem:dictSecItemAttributes];
     //NSString* strIssuer =           [FS_KA_Helper getIssuerForSecItem:dictSecItemAttributes];
-    
+
     [resultDictionary setValue:strCertType      forKey:kstrKeyCertType];
     [resultDictionary setValue:strCertEncoding  forKey:kstrKeyCertEncoding];
     [resultDictionary setValue:strSerialNum     forKey:kstrKeySerialNumber];
     [resultDictionary setValue:strSubjectKeyId  forKey:kstrKeySubjectKeyId];
     [resultDictionary setValue:strPublicKeyHash forKey:kstrKeyPublicKeyHash];
-    
+
     return;
 }
 
@@ -472,9 +466,9 @@
 {
     SecCertificateRef certRef =     (__bridge SecCertificateRef)([dictSecItemAttributes objectForKey:(__bridge id)(kSecValueRef)]);
     NSString* strSummary =          [FS_KA_Helper getSummaryForCert:certRef];
-    
+
     [resultDictionary setValue:strSummary forKey:kstrKeySummary];
-    
+
     return;
 }
 
@@ -482,14 +476,14 @@
 - (void)loadKeys
 {
     NSDictionary* queryParamsKeys = [self createKeychainQueryForKeys];
-    
+
     NSArray* resultItems = [self searchKeychainUsingQuery:queryParamsKeys];
-    
+
     if (nil == resultItems) //Either no items found or an error occured. Either way do not proceed
         return;
-    
+
     [self addKeys:resultItems];
-    
+
     return;
 }
 
@@ -501,30 +495,30 @@
                                      (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnAttributes,
                                      (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnData,
                                      nil];
-    
+
     return dictQueryParams;
-    
+
 }
 
 - (void) addKeys:(NSArray*)resultItems
 {
     NSMutableArray*         keychainKeys                    = [[NSMutableArray alloc]       initWithCapacity:kInitialNumOfKeys];
-    
+
     for (unsigned int uiIndex = 0; uiIndex < [resultItems count]; uiIndex++)
     {
         NSMutableDictionary*    dictReadableSecItemAttributes   = [[NSMutableDictionary alloc]  initWithCapacity:kNumOfAttributesPerKeychainItem];
-        
+
         NSDictionary *dictSecItemAttributes = (NSDictionary *)([resultItems objectAtIndex:uiIndex]);
-        
+
         [self addCommonAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        
+
         [self addKeyAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        
+
         [keychainKeys addObject:dictReadableSecItemAttributes];
     }
-    
+
     [allKeychainItems setObject:keychainKeys forKey:kstrKeyKeys];
-    
+
     return;
 }
 
@@ -532,13 +526,13 @@
 {
     if(nil == dictSecItemAttributes) //nothing to add
         return;
-    
+
     if (0 >= [dictSecItemAttributes count])
         return; //nothing to add
-    
+
     if(nil == resultDictionary) //result dictionary is nil
         return;
-    
+
     NSString *strKeyClass =         [FS_KA_Helper getKeyClassForSecItem:dictSecItemAttributes];
     NSString *strAppLabel =         [FS_KA_Helper getApplicationLabelForSecItem:dictSecItemAttributes];
     NSString *strIsPermanent =      [FS_KA_Helper getIsPermanentForSecItem:dictSecItemAttributes];
@@ -554,7 +548,7 @@
     NSString *strCanWrap =          [FS_KA_Helper getCanWrapForSecItem:dictSecItemAttributes];
     NSString *strCanUnwrap =        [FS_KA_Helper getCanUnwrapForSecItem:dictSecItemAttributes];
     NSString *strKeyValue =         [FS_KA_Helper getKeyValueForSecItem:dictSecItemAttributes];
-    
+
     [resultDictionary setValue:strKeyClass      forKey:kstrKey_KeyClass];
     [resultDictionary setValue:strAppLabel      forKey:kstrKeyAppLabel];
     [resultDictionary setValue:strIsPermanent   forKey:kstrKeyIsPermanent];
@@ -574,19 +568,18 @@
     return;
 }
 
-
 #pragma mark - Load Identities
 - (void)loadIdentities
 {
     NSDictionary* queryParamsIdentities = [self createKeychainQueryForIdentities];
-    
+
     NSArray* resultItems = [self searchKeychainUsingQuery:queryParamsIdentities];
-    
+
     if (nil == resultItems) //Either no items found or an error occured. Either way do not proceed
         return;
-    
+
     [self addIdentities:resultItems];
-    
+
     return;
 }
 
@@ -599,46 +592,46 @@
                                      (__bridge id)kCFBooleanTrue,        (__bridge id)kSecReturnData,
                                      (__bridge id)kCFBooleanTrue,        (__bridge id)kSecReturnRef,
                                      nil];
-    
+
     return dictQueryParams;
-    
+
 }
 
 - (void) addIdentities:(NSArray*)resultItems
 {
     NSMutableArray*         keychainIdentities        = [[NSMutableArray alloc]       initWithCapacity:kInitialNumOfIdentities];
-    
+
     for (unsigned int uiIndex = 0; uiIndex < [resultItems count]; uiIndex++)
     {
         NSMutableDictionary*    dictReadableSecItemAttributes   = [[NSMutableDictionary alloc]  initWithCapacity:kNumOfAttributesPerKeychainItem];
-        
+
         NSDictionary *dictSecItemAttributes = (NSDictionary *)([resultItems objectAtIndex:uiIndex]);
-        
+
         [self addCommonAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
- 
+
         [self addCertificateAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        
+
         [self addCertificateSummaryForIdentityFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        
+
         [self addKeyAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        
+
         [keychainIdentities addObject:dictReadableSecItemAttributes];
     }
-    
+
     [allKeychainItems setObject:keychainIdentities forKey:kstrKeyIdentities];
-    
+
     return;
 }
 
 - (void)addCertificateSummaryForIdentityFrom:(NSDictionary *)dictSecItemAttributes toDictionary:(NSMutableDictionary *)resultDictionary
 {
     NSString* strSummary = @"[Not Set]";
-    
+
     SecIdentityRef identityRef =     (__bridge SecIdentityRef)([dictSecItemAttributes objectForKey:(__bridge id)(kSecValueRef)]);
     if (NULL != identityRef)
     {
         SecCertificateRef certRef;
-        
+
         OSStatus resultStatus = SecIdentityCopyCertificate(identityRef, &certRef);
         if(errSecSuccess == resultStatus)
         {
@@ -650,9 +643,9 @@
             NSLog(@"Error obtaining the certificate from the identity");
         }
     }
-        
+
     [resultDictionary setValue:strSummary forKey:kstrKeySummary];
-    
+
     return;
 }
 
@@ -670,25 +663,25 @@
     [self checkInternetPasswordsForWeakPasswords:weakPasswords];
 
     [keychainAnalysisResults setValue:weakPasswords forKey:kstrKeyWeakPasswordItems];
-    
+
     return;
 }
 
 - (void)checkGenericPasswordsForWeakPasswords:(NSMutableArray*)resultsArray
 {
     NSArray* arrGenericPasswords = [allKeychainItems objectForKey:kstrKeyGenericPasswords];
-    
+
     [self checkForWeakPasswords:arrGenericPasswords ofType:kstrResultItemGenericPassword andAddToResults:resultsArray];
-    
+
     return;
 }
 
 - (void)checkInternetPasswordsForWeakPasswords:(NSMutableArray*)resultsArray
 {
     NSArray* arrInternetPasswords = [allKeychainItems objectForKey:kstrKeyInternetPasswords];
-    
+
     [self checkForWeakPasswords:arrInternetPasswords ofType:kstrResultItemInternetPassword andAddToResults:resultsArray];
-    
+
     return;
 }
 
@@ -699,15 +692,15 @@
         NSDictionary *dictCurrentSecItem = [arrPasswords objectAtIndex:uiIndex];
         NSString* strPassword = [dictCurrentSecItem objectForKey:kstrKeyPassword];
         BOOL isPasswordWeak = [FS_KA_Helper checkIfPasswordIsWeak:strPassword];
-        
+
         if (NO == isPasswordWeak)
             continue;
-        
+
         NSMutableDictionary *dictAnalysisResultItem = [NSMutableDictionary dictionaryWithDictionary:dictCurrentSecItem];
         [dictAnalysisResultItem setValue:strPasswordType forKey:kstrKeyResultItemType];
         [resultsArray addObject:dictAnalysisResultItem];
     }
-    
+
     return;
 }
 
@@ -715,9 +708,9 @@
 - (void)checkKeychainItemsForWeakAuthScheme
 {
     NSMutableArray* weakAuthSchemeItems = [[NSMutableArray alloc] initWithCapacity:kInitialNumOfWeakAuthenticationItems];
-    
+
     [self checkInternetPasswordsForWeakAuthScheme:weakAuthSchemeItems];
-    
+
     [keychainAnalysisResults setValue:weakAuthSchemeItems forKey:kstrKeyWeakAuthItems];
 
     return;
@@ -733,7 +726,7 @@
 
         NSString* strAuthScheme = [dictCurrentSecItem objectForKey:kstrKeyAuthType];
         BOOL isAuthSchemeWeak   = [FS_KA_Helper checkIfAuthenticationSchemeIsWeak:strAuthScheme];
-        
+
         if (NO == isAuthSchemeWeak)
             continue;
 
@@ -741,7 +734,7 @@
         [dictAnalysisResultItem setValue:kstrResultItemInternetPassword forKey:kstrKeyResultItemType];
         [resultsArray addObject:dictAnalysisResultItem];
     }
-    
+
     return;
 }
 
@@ -749,38 +742,38 @@
 - (void)checkKeychainItemsForWeakProtocols
 {
     NSMutableArray* weakProtocolItems = [[NSMutableArray alloc] initWithCapacity:kInitialNumOfWeakProtocolItems];
-    
+
     [self checkInternetPasswordsForWeakProtocols:weakProtocolItems];
-    
+
     [keychainAnalysisResults setValue:weakProtocolItems forKey:kstrKeyWeakProtocolItems];
-    
+
     return;
 }
 
 - (void) checkInternetPasswordsForWeakProtocols:(NSMutableArray*)resultsArray
 {
     NSArray* arrInternetPasswords = [allKeychainItems objectForKey:kstrKeyInternetPasswords];
-    
+
     for (unsigned int uiIndex = 0; uiIndex < [arrInternetPasswords count]; uiIndex++)
     {
         NSDictionary *dictCurrentSecItem = [arrInternetPasswords objectAtIndex:uiIndex];
         NSString* strProtocol                 = [dictCurrentSecItem objectForKey:kstrKeyProtocol];
         BOOL isProtocolWeak = [FS_KA_Helper checkIfProtocolIsWeak:strProtocol];
-        
+
         if (NO == isProtocolWeak)
         {
             NSString* strPort = [dictCurrentSecItem objectForKey:kstrKeyPort];
             BOOL isInsecurePortBeingUsed = [FS_KA_Helper checkIfInsecurePortIsBeingUsed:strPort];
-            
+
             if (NO == isInsecurePortBeingUsed)
                 continue;
         }
-        
+
         NSMutableDictionary *dictAnalysisResultItem = [NSMutableDictionary dictionaryWithDictionary:dictCurrentSecItem];
         [dictAnalysisResultItem setValue:kstrResultItemInternetPassword forKey:kstrKeyResultItemType];
         [resultsArray addObject:dictAnalysisResultItem];
     }
-    
+
     return;
 }
 
@@ -788,30 +781,30 @@
 - (void)checkKeychainItemsForWeakKeys
 {
     NSMutableArray* weakKeysItems = [[NSMutableArray alloc] initWithCapacity:kInitialNumOfWeakKeyItems];
-    
+
     [self checkKeysForWeakKeys:weakKeysItems];
     [self checkIdentitiesForWeakKeys:weakKeysItems];
-    
+
     [keychainAnalysisResults setValue:weakKeysItems forKey:kstrKeyWeakKeyItems];
-    
+
     return;
 }
 
 - (void) checkKeysForWeakKeys:(NSMutableArray*)resultsArray
 {
     NSArray* arrKeys = [allKeychainItems objectForKey:kstrKeyKeys];
-    
+
     [self checkForWeakKeys:arrKeys ofType:kstrResultItemKey andAddToResults:resultsArray];
-    
+
     return;
 }
 
 - (void) checkIdentitiesForWeakKeys:(NSMutableArray*)resultsArray
 {
     NSArray* arrIdentities = [allKeychainItems objectForKey:kstrKeyIdentities];
-    
+
     [self checkForWeakKeys:arrIdentities ofType:kstrResultItemIdentity andAddToResults:resultsArray];
-    
+
     return;
 }
 
@@ -821,15 +814,15 @@
     {
         NSDictionary *dictCurrentSecItem = [arrItems objectAtIndex:uiIndex];
         BOOL isKeyWeak = [FS_KA_Helper checkIfKeyIsWeak:dictCurrentSecItem];
-        
+
         if (NO == isKeyWeak)
             continue;
-        
+
         NSMutableDictionary *dictAnalysisResultItem = [NSMutableDictionary dictionaryWithDictionary:dictCurrentSecItem];
         [dictAnalysisResultItem setValue:strItemType forKey:kstrKeyResultItemType];
         [resultsArray addObject:dictAnalysisResultItem];
     }
-    
+
     return;
 }
 
@@ -845,52 +838,52 @@
     [self checkIdentitiesForWeakAccessibility:weakAccessibilityItems];
 
     [keychainAnalysisResults setValue:weakAccessibilityItems forKey:kstrKeyWeakAccessibilityItems];
-    
+
     return;
 }
 
 - (void) checkGenericPasswordsForWeakAccessibility:(NSMutableArray*)resultsArray
 {
     NSArray* arrItems = [allKeychainItems objectForKey:kstrKeyGenericPasswords];
-    
+
     [self checkForWeakAccessibility:arrItems ofType:kstrResultItemGenericPassword andAddToResults:resultsArray];
-    
+
     return;
 }
 
 - (void) checkInternetPasswordsForWeakAccessibility:(NSMutableArray*)resultsArray
 {
     NSArray* arrItems = [allKeychainItems objectForKey:kstrKeyInternetPasswords];
-    
+
     [self checkForWeakAccessibility:arrItems ofType:kstrResultItemInternetPassword andAddToResults:resultsArray];
-    
+
     return;
 }
 
 - (void) checkCertificatesForWeakAccessibility:(NSMutableArray*)resultsArray
 {
     NSArray* arrItems = [allKeychainItems objectForKey:kstrKeyCertificates];
-    
+
     [self checkForWeakAccessibility:arrItems ofType:kstrResultItemCertificate andAddToResults:resultsArray];
-    
+
     return;
 }
 
 - (void) checkKeysForWeakAccessibility:(NSMutableArray*)resultsArray
 {
     NSArray* arrItems = [allKeychainItems objectForKey:kstrKeyKeys];
-    
+
     [self checkForWeakAccessibility:arrItems ofType:kstrResultItemKey andAddToResults:resultsArray];
-    
+
     return;
 }
 
 - (void) checkIdentitiesForWeakAccessibility:(NSMutableArray*)resultsArray
 {
     NSArray* arrItems = [allKeychainItems objectForKey:kstrKeyIdentities];
-    
+
     [self checkForWeakAccessibility:arrItems ofType:kstrResultItemIdentity andAddToResults:resultsArray];
-    
+
     return;
 }
 
@@ -901,15 +894,15 @@
         NSDictionary *dictCurrentSecItem = [arrItems objectAtIndex:uiIndex];
         NSString* strAccessibility = [dictCurrentSecItem objectForKey:kstrKeyAccessible];
         BOOL canItemBeAccessedInsecurely = [FS_KA_Helper checkIfAccessibilityIsWeak:strAccessibility];
-        
+
         if (NO == canItemBeAccessedInsecurely)
             continue;
-        
+
         NSMutableDictionary *dictAnalysisResultItem = [NSMutableDictionary dictionaryWithDictionary:dictCurrentSecItem];
         [dictAnalysisResultItem setValue:strItemType forKey:kstrKeyResultItemType];
         [resultsArray addObject:dictAnalysisResultItem];
     }
-    
+
     return;
 }
 
@@ -923,7 +916,7 @@
     NSString* strKeychainDataJSONP = [FS_KA_Helper wrapJSONData:strKeychainDataJSON withFunction:kstrDataReportJSONFunction];
     if (nil == strKeychainDataJSONP)
         return nil;
-    
+
     return strKeychainDataJSONP;
 }
 
@@ -934,7 +927,7 @@
     {
         return nil;
     }
-    
+
     NSError* errString;
     BOOL bSuccess = [[NSFileManager defaultManager]createDirectoryAtURL:urlDataExportDir withIntermediateDirectories:TRUE attributes:nil error:&errString];
     if (YES != bSuccess)
@@ -942,7 +935,7 @@
         NSLog(@"Error occured while creating the %@ directory. Error is %@", [urlDataExportDir path], [errString localizedDescription]);
         return nil;
     }
-    
+
     return urlDataExportDir;
 }
 - (NSURL*)getDataDirectory
@@ -956,7 +949,7 @@
 
     NSURL* urlCacheDir      = [arrURLs objectAtIndex:0];
     NSURL* urlDataExportDir = [urlCacheDir  URLByAppendingPathComponent:kstrDataAndReportsDir isDirectory:YES];
-    
+
     return urlDataExportDir;
 }
 
@@ -971,7 +964,7 @@
     {
         [FS_KA_Helper copyItemAtURL:dataViewerHTMLURL toDirAtURL:dataDir];
     }
-    
+
     NSURL* dataViewerHTMLHeaderFileURL = [[NSBundle mainBundle] URLForResource:kstrReportHeaderImageFileName withExtension:kstrReportHeaderImageFileExt];
     if (nil == dataViewerHTMLHeaderFileURL)
     {
@@ -981,17 +974,16 @@
     {
         [FS_KA_Helper copyItemAtURL:dataViewerHTMLHeaderFileURL toDirAtURL:dataDir];
     }
-    
+
     return;
 }
 
 - (void)saveKeychainData:(NSString*)strKeychainDataJSONP toReportDir:(NSURL*)dataDir;
 {
     NSURL* urlKeychainDataReportFile = [dataDir URLByAppendingPathComponent:kstrDataReportFile];
-    
+
     [FS_KA_Helper saveData:strKeychainDataJSONP toFile:urlKeychainDataReportFile];
 }
-
 
 #pragma mark - Export Analysis Data
 - (NSString*)convertstrAnalysisDataToJSONP
@@ -999,18 +991,18 @@
     NSString* strAnalysisDataJSON = [FS_KA_Helper convertDictionaryToJSON:keychainAnalysisResults];
     if (nil == strAnalysisDataJSON)
         return nil;
-    
+
     NSString* strAnalysisDataJSONP = [FS_KA_Helper wrapJSONData:strAnalysisDataJSON withFunction:kstrAnalysisReportJSONFunction];
     if (nil == strAnalysisDataJSONP)
         return nil;
-    
+
     return strAnalysisDataJSONP;
 }
 
 - (void)saveAnalysisData:(NSString*)strAnalysisDataJSONP toReportDir:(NSURL*)dataDir
 {
     NSURL* urlAnalysisDataReportFile = [dataDir URLByAppendingPathComponent:kstrAnalysisReportFile];
-    
+
     [FS_KA_Helper saveData:strAnalysisDataJSONP toFile:urlAnalysisDataReportFile];
 }
 
@@ -1025,7 +1017,7 @@
     {
         [FS_KA_Helper copyItemAtURL:analysisReportViewerHTMLURL toDirAtURL:dataDir];
     }
-    
+
     NSURL* analysisReportViewerHTMLHeaderFileURL = [[NSBundle mainBundle] URLForResource:kstrReportHeaderImageFileName withExtension:kstrReportHeaderImageFileExt];
     if (nil == analysisReportViewerHTMLHeaderFileURL)
     {
@@ -1035,16 +1027,15 @@
     {
         [FS_KA_Helper copyItemAtURL:analysisReportViewerHTMLHeaderFileURL toDirAtURL:dataDir];
     }
-    
+
     return;
 }
-
 
 #pragma mark - Common Functions
 - (NSArray*)searchKeychainUsingQuery:(NSDictionary*)queryParams
 {
     CFArrayRef resultItems;
-    
+
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)(queryParams), (CFTypeRef*)&resultItems);
     if(errSecSuccess != status)
     {
@@ -1052,27 +1043,26 @@
             NSLog(@"No keychain items found matching the specified criteria. Returning");
         else
             NSLog(@"Error encountered while enumerating keychain for the specified criteria. Error code: %d",(int)status);
-        
+
         return nil;
     }
-    
+
     NSArray *nsResults = (__bridge NSArray *)(resultItems);
-    
+
     return nsResults;
 }
-
 
 - (void)addCommonAttributesFrom:(NSDictionary *)dictSecItemAttributes toDictionary:(NSMutableDictionary *)resultDictionary
 {
     if(nil == dictSecItemAttributes) //nothing to add
         return;
-    
+
     if (0 >= [dictSecItemAttributes count])
         return; //nothing to add
-    
+
     if(nil == resultDictionary) //result dictionary is nil
         return;
-    
+
     NSString* strAccessible =       [FS_KA_Helper getAccessiblityForSecItem:dictSecItemAttributes];
     NSString* strAccessGroup =      [FS_KA_Helper getAccessGroupForSecItem:dictSecItemAttributes];
     NSString* strCreationDate =     [FS_KA_Helper getCreationDateForSecItem:dictSecItemAttributes];
@@ -1084,7 +1074,7 @@
     NSString* strLabel =            [FS_KA_Helper getLabelForSecItem:dictSecItemAttributes];
     NSString* strIsInvisible =      [FS_KA_Helper getIsInvisibleForSecItem:dictSecItemAttributes];
     NSString* strIsNegative =       [FS_KA_Helper getIsNegativeForSecItem:dictSecItemAttributes];
-    
+
     [resultDictionary setValue:strAccessible        forKey:kstrKeyAccessible];
     [resultDictionary setValue:strAccessGroup       forKey:kstrKeyAccessGroup];
     [resultDictionary setValue:strCreationDate      forKey:kstrKeyCreationDate];
@@ -1096,7 +1086,7 @@
     [resultDictionary setValue:strLabel             forKey:kstrKeyLabel];
     [resultDictionary setValue:strIsInvisible       forKey:kstrKeyIsInvisible];
     [resultDictionary setValue:strIsNegative        forKey:kstrKeyIsNegative];
-    
+
     return; // Indicates Success
 }
 
@@ -1104,7 +1094,7 @@
 - (void)launchConfirmationDialogForDataExport:(BOOL)bErrorOccured
 {
     NSString* strMessage = kstrConfirmationDialogErrorMsg;
-    
+
     if (NO == bErrorOccured)
     {
         NSURL* urlDataDir = [self getDataDirectory];
@@ -1116,16 +1106,16 @@
             strMessage = [kstrConfirmationDialogSuccessMsg stringByAppendingString:[strKeychainExportDataFileAbsPath path]];
         }
     }
-    
+
     [self launchConfirmationDialogWithTitle:kstrConfirmationView_ExportData andMessage:strMessage];
-    
+
     return;
 }
 
 - (void)launchConfirmationDialogForAnalysisReport:(BOOL)bErrorOccured
 {
     NSString* strMessage = kstrConfirmationDialogErrorMsg;
-    
+
     if (NO == bErrorOccured)
     {
         NSURL* urlDataDir = [self getDataDirectory];
@@ -1138,9 +1128,9 @@
             strMessage = [kstrConfirmationDialogSuccessMsg stringByAppendingString:[strKeychainAnalysisReportFileAbsPath path]];
         }
     }
-    
+
     [self launchConfirmationDialogWithTitle:kstrConfirmationView_AnalyzeData andMessage:strMessage];
-    
+
     return;
 }
 
@@ -1153,9 +1143,9 @@
     [confirmationDialogController setStrViewTitle:strTitle];
     [confirmationDialogController setStrMessage:strMessage];
 //    [self presentViewController:confirmationDialogController animated:YES completion:nil];
-    
+
     [[self navigationController]pushViewController:confirmationDialogController animated:YES];
-    
+
     return;
 }
 
@@ -1163,9 +1153,9 @@
 - (void)confirmationDialog:(FS_KA_ConfirmationDialogViewController *)viewController closeView:(BOOL)closeButtonClicked
 {
     //[self dismissViewControllerAnimated:YES completion:nil];
-    
+
     [[self navigationController]popViewControllerAnimated:YES];
-    
+
     return;
 }
 
@@ -1173,9 +1163,8 @@
 - (void)aboutDialog:(FS_KA_AboutDialogViewController *)viewController closeView:(BOOL)closeButtonClicked
 {
     [[self navigationController]popViewControllerAnimated:YES];
-    
+
     return;
 }
-
 
 @end

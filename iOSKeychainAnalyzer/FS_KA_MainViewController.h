@@ -24,7 +24,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *messageLabel;
 
 #pragma mark - UI Events
-- (IBAction)exportKeychainData: (id)sender;
+- (IBAction)exportKeychainData:(id)sender;
 - (IBAction)analyzeKeychainData:(id)sender;
 - (IBAction)aboutKeychainAnalyzer:(id)sender;
 
@@ -125,9 +125,5 @@
 - (void)            launchConfirmationDialogForAnalysisReport:  (BOOL                   )bErrorOccured;
 - (void)            launchConfirmationDialogWithTitle:          (NSString*              )strTitle
                                            andMessage:          (NSString*              )strMessage;
-
-
-
-
 
 @end
