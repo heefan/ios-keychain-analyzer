@@ -11,7 +11,6 @@
 #import "FS_KA_MainViewController.h"
 #import "FS_KA_Helper.h"
 #import "FS_KA_Constants.h"
-#import "sqlite3.h"
 
 @interface FS_KA_MainViewController ()
 
@@ -23,7 +22,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
     }
     return self;
 }
@@ -31,7 +29,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
 
     //[self setTitle:kstrMainViewTitle];
 
@@ -41,7 +38,6 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -65,7 +61,7 @@
 }
 
 #pragma mark - UI Events
-- (IBAction)exportKeychainData: (id)sender
+- (IBAction)exportKeychainData:(id)sender
 {
     BOOL bErrorOccured = NO;
 
@@ -76,12 +72,10 @@
     }
 
     NSString* strKeychainDataJSONP = [self convertKeychainDataToJSONP];
-    if (nil == strKeychainDataJSONP)
-    {
+
+    if (nil == strKeychainDataJSONP) {
         bErrorOccured = YES;
-    }
-    else
-    {
+    } else {
         NSURL* dataDir = [self createDataDirectory];
         if (nil == dataDir)
         {
@@ -133,8 +127,9 @@
 
 - (IBAction)aboutKeychainAnalyzer:(id)sender
 {
-    FS_KA_AboutDialogViewController *aboutDialogController = [[FS_KA_AboutDialogViewController alloc]
-                                                                            initWithNibName:@"AboutDialogView" bundle:nil];
+    FS_KA_AboutDialogViewController *aboutDialogController
+        = [[FS_KA_AboutDialogViewController alloc] initWithNibName:@"AboutDialogView" bundle:nil];
+
     [aboutDialogController setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
     [aboutDialogController setDelegate:self];
 
@@ -146,58 +141,12 @@
 #pragma mark - Top Level Functions
 - (FS_KA_Status)loadKeychain
 {
-#if 0
-    if (_appIdTextField.text.length == 0) {
-        _messageLabel.text = @"App ID cannot be empty";
-        return StatusInvalidInput;
-    }
-
-    if (_deviceIdTextField.text.length == 0) {
-        _messageLabel.text = @"Device ID cannot be empty";
-        return StatusInvalidInput;
-    }
-
-    NSString *databasePath = [FS_KA_Helper getKeychainDBwithDeviceId:@"" applicationId:@""];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-
-    if (![fileManager fileExistsAtPath:databasePath]){
-        _messageLabel.text = @"Keychain file does not exist";
-        return StatusKeychainFileNotExist;
-    }
-
-    // open keychain database
-    const char *dbpath = [databasePath UTF8String];
-    sqlite3 *keychainDB;
-    sqlite3_stmt *statement;
-
-    if (sqlite3_open(dbpath, &keychainDB) == SQLITE_OK)
-    {
-        const char *query_stmt = "SELECT DISTINCT agrp FROM genp UNION SELECT DISTINCT agrp FROM inet";
-
-        if (sqlite3_prepare_v2(keychainDB, query_stmt, -1, &statement, NULL) == SQLITE_OK)
-        {
-            while(sqlite3_step(statement) == SQLITE_ROW)
-            {
-                NSString *group = [[NSString alloc] initWithUTF8String:(const char *) sqlite3_column_text(statement, 0)];
-                NSLog(@"group: %@", group);
-
-            }
-            sqlite3_finalize(statement);
-        }
-        sqlite3_close(keychainDB);
-    }
-#endif
-
     allKeychainItems = [[NSMutableDictionary alloc]initWithCapacity:kTypesOfKeychainItems];
 
     [self loadGenericPasswords];
-
     [self loadInternetPasswords];
-
     [self loadCertificates];
-
     [self loadKeys];
-
     [self loadIdentities];
 
     bIsKeychainLoaded = YES;
@@ -208,15 +157,10 @@
 - (void)runKeychainAnalysis
 {
     keychainAnalysisResults = [[NSMutableDictionary alloc]initWithCapacity:kNumofKeychainAnalysisChecks];
-
     [self checkKeychainItemsForWeakPasswords];
-
     [self checkKeychainItemsForWeakAuthScheme];
-
     [self checkKeychainItemsForWeakProtocols];
-
     [self checkKeychainItemsForWeakKeys];
-
     [self checkKeychainItemsForInsecureAccessibility];
 
     return;
@@ -227,12 +171,10 @@
 - (void)loadGenericPasswords
 {
     NSDictionary* queryParamsGenericPasswords = [self createKeychainQueryForGenericPasswords];
-
     NSArray* resultItems = [self searchKeychainUsingQuery:queryParamsGenericPasswords];
 
     if (nil == resultItems) //Either no items found or an error occured. Either way do not proceed
         return;
-
     [self addGenericPasswords:resultItems];
 
     return;
@@ -240,31 +182,26 @@
 
 - (NSDictionary*)createKeychainQueryForGenericPasswords
 {
-    NSDictionary *dictQueryParams = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     (__bridge id)kSecClassGenericPassword,     (__bridge id)kSecClass,
-                                     (__bridge id)kSecMatchLimitAll,            (__bridge id)kSecMatchLimit,
-                                     (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnAttributes,
-                                     (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnData,
-                                     nil];
+    NSDictionary *dictQueryParams = @{(__bridge id)kSecClassGenericPassword : (__bridge id)kSecClass,
+                                      (__bridge id)kSecMatchLimitAll : (__bridge id)kSecMatchLimit,
+                                      (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnAttributes,
+                                      (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnData };
 
     return dictQueryParams;
-
 }
 
-- (void) addGenericPasswords:(NSArray*)resultItems
+- (void)addGenericPasswords:(NSArray*)resultItems
 {
-    NSMutableArray*         keychainGenericPasswords        = [[NSMutableArray alloc]       initWithCapacity:kInitialNumOfGenericPasswords];
+    NSMutableArray *keychainGenericPasswords = [[NSMutableArray alloc] initWithCapacity:kInitialNumOfGenericPasswords];
 
     for (unsigned int uiIndex = 0; uiIndex < [resultItems count]; uiIndex++)
     {
-        NSMutableDictionary*    dictReadableSecItemAttributes   = [[NSMutableDictionary alloc]  initWithCapacity:kNumOfAttributesPerKeychainItem];
+        NSMutableDictionary *dictReadableSecItemAttributes = [[NSMutableDictionary alloc] initWithCapacity:kNumOfAttributesPerKeychainItem];
 
         NSDictionary *dictSecItemAttributes = (NSDictionary *)([resultItems objectAtIndex:uiIndex]);
 
         [self addCommonAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-
         [self addGenericPasswordAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-
         [keychainGenericPasswords addObject:dictReadableSecItemAttributes];
     }
 
@@ -273,7 +210,8 @@
     return;
 }
 
-- (void)addGenericPasswordAttributesFrom:(NSDictionary *)dictSecItemAttributes toDictionary:(NSMutableDictionary *)resultDictionary
+- (void)addGenericPasswordAttributesFrom:(NSDictionary *)dictSecItemAttributes
+                            toDictionary:(NSMutableDictionary *)resultDictionary
 {
     if(nil == dictSecItemAttributes) //nothing to add
         return;
@@ -301,7 +239,6 @@
 - (void)loadInternetPasswords
 {
     NSDictionary* queryParamsInternetPasswords = [self createKeychainQueryForInternetPasswords];
-
     NSArray* resultItems = [self searchKeychainUsingQuery:queryParamsInternetPasswords];
 
     if (nil == resultItems) //Either no items found or an error occured. Either way do not proceed
@@ -314,12 +251,10 @@
 
 - (NSDictionary*)createKeychainQueryForInternetPasswords
 {
-    NSDictionary *dictQueryParams = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     (__bridge id)kSecClassInternetPassword,     (__bridge id)kSecClass,
-                                     (__bridge id)kSecMatchLimitAll,            (__bridge id)kSecMatchLimit,
-                                     (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnAttributes,
-                                     (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnData,
-                                     nil];
+    NSDictionary *dictQueryParams = @{(__bridge id)kSecClassInternetPassword : (__bridge id)kSecClass,
+                                      (__bridge id)kSecMatchLimitAll : (__bridge id)kSecMatchLimit,
+                                      (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnAttributes,
+                                      (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnData};
 
     return dictQueryParams;
 
@@ -327,16 +262,16 @@
 
 - (void) addInternetPasswords:(NSArray*)resultItems
 {
-    NSMutableArray*         keychainInternetPasswords        = [[NSMutableArray alloc]       initWithCapacity:kInitialNumOfInternetPasswords];
+    NSMutableArray *keychainInternetPasswords = [[NSMutableArray alloc] initWithCapacity:kInitialNumOfInternetPasswords];
 
     for (unsigned int uiIndex = 0; uiIndex < [resultItems count]; uiIndex++)
     {
-        NSMutableDictionary*    dictReadableSecItemAttributes   = [[NSMutableDictionary alloc]  initWithCapacity:kNumOfAttributesPerKeychainItem];
+        NSMutableDictionary *dictReadableSecItemAttributes
+            = [[NSMutableDictionary alloc] initWithCapacity:kNumOfAttributesPerKeychainItem];
 
         NSDictionary *dictSecItemAttributes = (NSDictionary *)([resultItems objectAtIndex:uiIndex]);
 
         [self addCommonAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-
         [self addInternetPasswordAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
 
         [keychainInternetPasswords addObject:dictReadableSecItemAttributes];
@@ -347,7 +282,8 @@
     return;
 }
 
-- (void)addInternetPasswordAttributesFrom:(NSDictionary *)dictSecItemAttributes toDictionary:(NSMutableDictionary *)resultDictionary
+- (void)addInternetPasswordAttributesFrom:(NSDictionary *)dictSecItemAttributes
+                             toDictionary:(NSMutableDictionary *)resultDictionary
 {
     if(nil == dictSecItemAttributes) //nothing to add
         return;
@@ -396,16 +332,13 @@
 
 - (NSDictionary*)createKeychainQueryForCertificates
 {
-    NSDictionary *dictQueryParams = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     (__bridge id)kSecClassCertificate,         (__bridge id)kSecClass,
-                                     (__bridge id)kSecMatchLimitAll,            (__bridge id)kSecMatchLimit,
-                                     (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnAttributes,
-                                     (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnData,
-                                     (__bridge id)kCFBooleanTrue,               (__bridge id)kSecReturnRef,
-                                     nil];
+    NSDictionary *dictQueryParams = @{(__bridge id)kSecClassCertificate : (__bridge id)kSecClass,
+                                      (__bridge id)kSecMatchLimitAll : (__bridge id)kSecMatchLimit,
+                                      (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnAttributes,
+                                      (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnData,
+                                      (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnRef };
 
     return dictQueryParams;
-
 }
 
 - (void) addCertificates:(NSArray*)resultItems

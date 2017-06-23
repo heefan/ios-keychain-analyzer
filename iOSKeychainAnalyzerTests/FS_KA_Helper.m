@@ -8,7 +8,9 @@
 
 #import <XCTest/XCTest.h>
 #import <Foundation/Foundation.h>
+#import <Security/Security.h>
 #import "FS_KA_Helper.h"
+#import "FS_KA_MainViewController.h"
 
 @interface Test_FS_KA_Helper : XCTestCase
 
@@ -30,6 +32,11 @@
     NSLog(@"%@", dummy);
 }
 
-
+- (void)test_generateDummyKeychainData
+{
+    FS_KA_MainViewController * vc = [[FS_KA_MainViewController alloc] init];
+    [vc loadKeychain];
+    
+}
 
 @end
