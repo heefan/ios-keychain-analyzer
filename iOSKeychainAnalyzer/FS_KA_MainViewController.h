@@ -19,8 +19,6 @@
     NSMutableDictionary *keychainAnalysisResults;
 }
 
-@property (weak, nonatomic) IBOutlet UITextField *deviceIdTextField;
-@property (weak, nonatomic) IBOutlet UITextField *appIdTextField;
 @property (weak, nonatomic) IBOutlet UILabel *messageLabel;
 
 #pragma mark - UI Events
