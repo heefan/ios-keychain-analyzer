@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "FS_KA_MainViewController.h"
+#import "TestConstant.h"
 
 @interface Test_FS_KA_MainViewController : XCTestCase
 {
@@ -26,10 +27,15 @@
     [super tearDown];
 }
 
-- (void)test_loadKeychain
+- (void)test_createKeychainQueryForGenericPassword
 {
+    NSDictionary * dic = [self createKeychainQueryForGenericPassword];
     
 
+}
+
+- (void)test_loadGenericPassword
+{
 }
 
 - (void)testExample {

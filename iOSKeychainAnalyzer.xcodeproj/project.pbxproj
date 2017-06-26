@@ -30,7 +30,8 @@
 		0F243B7C1EF977E700A017F3 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F243B7B1EF977E700A017F3 /* libsqlite3.tbd */; };
 		0F243B7D1EF9783500A017F3 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F243B7B1EF977E700A017F3 /* libsqlite3.tbd */; };
 		0F8463531EFCD02700B617AF /* Test_FS_KA_MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F8463521EFCD02700B617AF /* Test_FS_KA_MainViewController.m */; };
-		0FC1496C1EF81DAF009298EF /* FS_KA_Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FC1496B1EF81DAF009298EF /* FS_KA_Helper.m */; };
+		0F8463571EFD074700B617AF /* HFKeychainWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F8463561EFD074700B617AF /* HFKeychainWrapper.m */; };
+		0FC1496C1EF81DAF009298EF /* Test_Keychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FC1496B1EF81DAF009298EF /* Test_Keychain.m */; };
 		0FF881B61EF2546A005ACC8B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FF881B51EF2546A005ACC8B /* Default-568h@2x.png */; };
 		A1F706D969EFCD684BB3C7C3 /* libPods-iOSKeychainAnalyzerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07E83B6AF933BF0A6F0E85D6 /* libPods-iOSKeychainAnalyzerTests.a */; };
 /* End PBXBuildFile section */
@@ -78,8 +79,11 @@
 		07E83B6AF933BF0A6F0E85D6 /* libPods-iOSKeychainAnalyzerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iOSKeychainAnalyzerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F243B7B1EF977E700A017F3 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		0F8463521EFCD02700B617AF /* Test_FS_KA_MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test_FS_KA_MainViewController.m; sourceTree = "<group>"; };
+		0F8463541EFCE6EA00B617AF /* TestConstant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestConstant.h; sourceTree = "<group>"; };
+		0F8463551EFD074700B617AF /* HFKeychainWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFKeychainWrapper.h; sourceTree = "<group>"; };
+		0F8463561EFD074700B617AF /* HFKeychainWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFKeychainWrapper.m; sourceTree = "<group>"; };
 		0FC149691EF81DAF009298EF /* iOSKeychainAnalyzerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSKeychainAnalyzerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0FC1496B1EF81DAF009298EF /* FS_KA_Helper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FS_KA_Helper.m; sourceTree = "<group>"; };
+		0FC1496B1EF81DAF009298EF /* Test_Keychain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Test_Keychain.m; sourceTree = "<group>"; };
 		0FC1496D1EF81DAF009298EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0FF881B51EF2546A005ACC8B /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		A214BA4C0CB3567947B6B164 /* Pods-iOSKeychainAnalyzerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOSKeychainAnalyzerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iOSKeychainAnalyzerTests/Pods-iOSKeychainAnalyzerTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -203,9 +207,12 @@
 		0FC1496A1EF81DAF009298EF /* iOSKeychainAnalyzerTests */ = {
 			isa = PBXGroup;
 			children = (
-				0FC1496B1EF81DAF009298EF /* FS_KA_Helper.m */,
+				0FC1496B1EF81DAF009298EF /* Test_Keychain.m */,
 				0FC1496D1EF81DAF009298EF /* Info.plist */,
 				0F8463521EFCD02700B617AF /* Test_FS_KA_MainViewController.m */,
+				0F8463541EFCE6EA00B617AF /* TestConstant.h */,
+				0F8463551EFD074700B617AF /* HFKeychainWrapper.h */,
+				0F8463561EFD074700B617AF /* HFKeychainWrapper.m */,
 			);
 			path = iOSKeychainAnalyzerTests;
 			sourceTree = "<group>";
@@ -392,8 +399,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F8463571EFD074700B617AF /* HFKeychainWrapper.m in Sources */,
 				0F8463531EFCD02700B617AF /* Test_FS_KA_MainViewController.m in Sources */,
-				0FC1496C1EF81DAF009298EF /* FS_KA_Helper.m in Sources */,
+				0FC1496C1EF81DAF009298EF /* Test_Keychain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

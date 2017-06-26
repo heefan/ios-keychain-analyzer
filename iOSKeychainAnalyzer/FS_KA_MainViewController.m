@@ -171,10 +171,13 @@
 - (void)loadGenericPasswords
 {
     NSDictionary* queryParamsGenericPasswords = [self createKeychainQueryForGenericPasswords];
+    NSLog(@"query dic: %@", queryParamsGenericPasswords);
+
     NSArray* resultItems = [self searchKeychainUsingQuery:queryParamsGenericPasswords];
 
     if (nil == resultItems) //Either no items found or an error occured. Either way do not proceed
         return;
+
     [self addGenericPasswords:resultItems];
 
     return;
@@ -185,7 +188,8 @@
     NSDictionary *dictQueryParams = @{(__bridge id)kSecClassGenericPassword : (__bridge id)kSecClass,
                                       (__bridge id)kSecMatchLimitAll : (__bridge id)kSecMatchLimit,
                                       (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnAttributes,
-                                      (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnData };
+                                      (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnData
+                                     };
 
     return dictQueryParams;
 }
@@ -294,14 +298,14 @@
     if(nil == resultDictionary) //result dictionary is nil
         return;
 
-    NSString* strAccount        = [FS_KA_Helper getAccountForSecItem:dictSecItemAttributes];
-    NSString* strSecDomain      = [FS_KA_Helper getSecurityDomainForSecItem:dictSecItemAttributes];
-    NSString* strServer         = [FS_KA_Helper getServerForSecItem:dictSecItemAttributes];
-    NSString* strProtocol       = [FS_KA_Helper getProtocolForSecItem:dictSecItemAttributes];
-    NSString* strAuthType       = [FS_KA_Helper getAuthenticationTypeForSecItem:dictSecItemAttributes];
-    NSString* strPort           = [FS_KA_Helper getPortForSecItem:dictSecItemAttributes];
-    NSString* strPath           = [FS_KA_Helper getPathForSecItem:dictSecItemAttributes];
-    NSString* strPassword       = [FS_KA_Helper getPasswordForSecItem:dictSecItemAttributes];
+    NSString* strAccount    = [FS_KA_Helper getAccountForSecItem:dictSecItemAttributes];
+    NSString* strSecDomain  = [FS_KA_Helper getSecurityDomainForSecItem:dictSecItemAttributes];
+    NSString* strServer     = [FS_KA_Helper getServerForSecItem:dictSecItemAttributes];
+    NSString* strProtocol   = [FS_KA_Helper getProtocolForSecItem:dictSecItemAttributes];
+    NSString* strAuthType   = [FS_KA_Helper getAuthenticationTypeForSecItem:dictSecItemAttributes];
+    NSString* strPort       = [FS_KA_Helper getPortForSecItem:dictSecItemAttributes];
+    NSString* strPath       = [FS_KA_Helper getPathForSecItem:dictSecItemAttributes];
+    NSString* strPassword   = [FS_KA_Helper getPasswordForSecItem:dictSecItemAttributes];
 
     [resultDictionary setValue:strAccount   forKey:kstrKeyAccount];
     [resultDictionary setValue:strSecDomain forKey:kstrKeyDomain];
