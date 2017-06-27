@@ -23,48 +23,38 @@ static const UInt8 kKeychainItemIdentifier[] = "com.apple.dts.KeychainUI\0";
 
 @implementation KeychainWrapper
 
-//Synthesize the getter and setter:
-
-@synthesize keychainData, genericPasswordQuery;
-
 - (id)init
 {
     if ((self = [super init])) {
         OSStatus keychainErr = noErr;
 
         // Set up the keychain search dictionary:
-        genericPasswordQuery = [[NSMutableDictionary alloc] init];
+        _genericPasswordQuery = [[NSMutableDictionary alloc] init];
 
         // This keychain item is a generic password.
-        [genericPasswordQuery setObject:(__bridge id)kSecClassGenericPassword
-                                 forKey:(__bridge id)kSecClass];
+        _genericPasswordQuery[(__bridge id)kSecClass] = (__bridge id)kSecClassGenericPassword;
 
         // The kSecAttrGeneric attribute is used to store a unique string that is used
-        // to easily identify and find this keychain item. The string is first
-        // converted to an NSData object:
-
+        // to easily identify and find this keychain item.
         NSData *keychainItemID = [NSData dataWithBytes:kKeychainItemIdentifier
                                                 length:strlen((const char *)kKeychainItemIdentifier)];
-        [genericPasswordQuery setObject:keychainItemID forKey:(__bridge id)kSecAttrGeneric];
-
+        _genericPasswordQuery[(__bridge id)kSecAttrGeneric] = keychainItemID;
+        
         // Return the attributes of the first match only:
-        [genericPasswordQuery setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
-
-        // Return the attributes of the keychain item (the password is
-        //  acquired in the secItemFormatToDictionary: method):
-        [genericPasswordQuery setObject:(__bridge id)kCFBooleanTrue
-                                 forKey:(__bridge id)kSecReturnAttributes];
-
+        _genericPasswordQuery[(__bridge id)kSecMatchLimit] =  (__bridge id)kSecMatchLimitOne;
+       
+        // Return the attributes of the keychain item (the password is acquired in the secItemFormatToDictionary: method):
+        _genericPasswordQuery[(__bridge id)kSecReturnAttributes] = (__bridge id)kCFBooleanTrue;
+        
         //Initialize the dictionary used to hold return data from the keychain:
         CFMutableDictionaryRef outDictionary = nil;
 
         // If the keychain item exists, return the attributes of the item:
-        keychainErr = SecItemCopyMatching((__bridge CFDictionaryRef)genericPasswordQuery,
-                                          (CFTypeRef *)&outDictionary);
+        keychainErr = SecItemCopyMatching((__bridge CFDictionaryRef)_genericPasswordQuery, (CFTypeRef *)&outDictionary);
 
         if (keychainErr == noErr) {
             // Convert the data dictionary into the format used by the view controller:
-            self.keychainData = [self secItemFormatToDictionary:(__bridge_transfer NSMutableDictionary *)outDictionary];
+            _keychainData = [self secItemFormatToDictionary:(__bridge_transfer NSMutableDictionary *)outDictionary];
         } else if (keychainErr == errSecItemNotFound) {
             // Put default values into the keychain if no matching
             // keychain item is found:
@@ -85,10 +75,10 @@ static const UInt8 kKeychainItemIdentifier[] = "com.apple.dts.KeychainUI\0";
 - (void)mySetObject:(id)inObject forKey:(id)key
 {
     if (inObject == nil) return;
-    id currentObject = [keychainData objectForKey:key];
+    id currentObject = [_keychainData objectForKey:key];
     if (![currentObject isEqual:inObject])
     {
-        [keychainData setObject:inObject forKey:key];
+        [_keychainData setObject:inObject forKey:key];
         [self writeToKeychain];
     }
 }
@@ -97,23 +87,23 @@ static const UInt8 kKeychainItemIdentifier[] = "com.apple.dts.KeychainUI\0";
 
 - (id)myObjectForKey:(id)key
 {
-    return [keychainData objectForKey:key];
+    return [_keychainData objectForKey:key];
 }
 
 // Reset the values in the keychain item, or create a new item if it
 // doesn't already exist:
 - (void)resetKeychainItem
 {
-    if (!keychainData) //Allocate the keychainData dictionary if it doesn't exist yet.
+    if (!_keychainData) //Allocate the _keychainData dictionary if it doesn't exist yet.
     {
-        self.keychainData = [[NSMutableDictionary alloc] init];
+        _keychainData = [[NSMutableDictionary alloc] init];
     }
-    else if (keychainData)
+    else if (_keychainData)
     {
-        // Format the data in the keychainData dictionary into the format needed for a query
+        // Format the data in the _keychainData dictionary into the format needed for a query
         //  and put it into tmpDictionary:
         NSMutableDictionary *tmpDictionary =
-        [self dictionaryToSecItemFormat:keychainData];
+        [self dictionaryToSecItemFormat:_keychainData];
 
         // Delete the keychain item in preparation for resetting the values:
         OSStatus errorcode = SecItemDelete((__bridge CFDictionaryRef)tmpDictionary);
@@ -122,12 +112,12 @@ static const UInt8 kKeychainItemIdentifier[] = "com.apple.dts.KeychainUI\0";
     }
 
     // Default generic data for Keychain Item:
-    [keychainData setObject:@"Item label" forKey:(__bridge id)kSecAttrLabel];
-    [keychainData setObject:@"Item description" forKey:(__bridge id)kSecAttrDescription];
-    [keychainData setObject:@"Account" forKey:(__bridge id)kSecAttrAccount];
-    [keychainData setObject:@"Service" forKey:(__bridge id)kSecAttrService];
-    [keychainData setObject:@"Your comment here." forKey:(__bridge id)kSecAttrComment];
-    [keychainData setObject:@"password" forKey:(__bridge id)kSecValueData];
+    [_keychainData setObject:@"Item label" forKey:(__bridge id)kSecAttrLabel];
+    [_keychainData setObject:@"Item description" forKey:(__bridge id)kSecAttrDescription];
+    [_keychainData setObject:@"Account" forKey:(__bridge id)kSecAttrAccount];
+    [_keychainData setObject:@"Service" forKey:(__bridge id)kSecAttrService];
+    [_keychainData setObject:@"Your comment here." forKey:(__bridge id)kSecAttrComment];
+    [_keychainData setObject:@"password" forKey:(__bridge id)kSecValueData];
 }
 
 // Implement the dictionaryToSecItemFormat: method, which takes the attributes that
@@ -215,7 +205,7 @@ static const UInt8 kKeychainItemIdentifier[] = "com.apple.dts.KeychainUI\0";
     NSMutableDictionary *updateItem = nil;
 
     // If the keychain item already exists, modify it:
-    if (SecItemCopyMatching((__bridge CFDictionaryRef)genericPasswordQuery,
+    if (SecItemCopyMatching((__bridge CFDictionaryRef)_genericPasswordQuery,
                             (CFTypeRef *)&attributes) == noErr)
     {
         // First, get the attributes returned from the keychain and add them to the
@@ -224,11 +214,11 @@ static const UInt8 kKeychainItemIdentifier[] = "com.apple.dts.KeychainUI\0";
 
         // Second, get the class value from the generic password query dictionary and
         // add it to the updateItem dictionary:
-        [updateItem setObject:[genericPasswordQuery objectForKey:(__bridge id)kSecClass]
+        [updateItem setObject:[_genericPasswordQuery objectForKey:(__bridge id)kSecClass]
                        forKey:(__bridge id)kSecClass];
 
         // Finally, set up the dictionary that contains new values for the attributes:
-        NSMutableDictionary *tempCheck = [self dictionaryToSecItemFormat:keychainData];
+        NSMutableDictionary *tempCheck = [self dictionaryToSecItemFormat:_keychainData];
 
         //Remove the class--it's not a keychain attribute:
         [tempCheck removeObjectForKey:(__bridge id)kSecClass];
@@ -240,10 +230,10 @@ static const UInt8 kKeychainItemIdentifier[] = "com.apple.dts.KeychainUI\0";
 
     } else {
         // No previous item found; add the new item.
-        // The new value was added to the keychainData dictionary in the mySetObject routine,
-        // and the other values were added to the keychainData dictionary previously.
+        // The new value was added to the _keychainData dictionary in the mySetObject routine,
+        // and the other values were added to the _keychainData dictionary previously.
         // No pointer to the newly-added items is needed, so pass NULL for the second parameter:
-        OSStatus errorcode = SecItemAdd((__bridge CFDictionaryRef)[self dictionaryToSecItemFormat:keychainData],
+        OSStatus errorcode = SecItemAdd((__bridge CFDictionaryRef)[self dictionaryToSecItemFormat:_keychainData],
                                         NULL);
         NSAssert(errorcode == noErr, @"Couldn't add the Keychain Item." );
         if (attributes)

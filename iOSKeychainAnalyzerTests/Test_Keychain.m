@@ -27,13 +27,8 @@
     [super tearDown];
 }
 
-- (void)test_setDummyGenericPassword
+- (void)test_setGenericPassword
 {
-    XCTAssertTrue([SAMKeychain setPassword:kPassword forService:@"wild pointer" account:@"heefan"],
-                  @"set password should be ok");
-
-    NSString * password = [SAMKeychain passwordForService:@"wild pointer" account:@"heefan"];
-    XCTAssertTrue([password isEqualToString:kPassword], @"The password should be <This is password>");
     
 }
 

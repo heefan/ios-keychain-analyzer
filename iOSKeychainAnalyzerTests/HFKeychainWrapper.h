@@ -8,10 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface KeychainWrapper : NSObject {
-    NSMutableDictionary        *keychainData;
-    NSMutableDictionary        *genericPasswordQuery;
-}
+@interface KeychainWrapper : NSObject
 
 @property (nonatomic, strong) NSMutableDictionary *keychainData;
 @property (nonatomic, strong) NSMutableDictionary *genericPasswordQuery;
