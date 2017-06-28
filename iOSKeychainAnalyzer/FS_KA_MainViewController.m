@@ -183,7 +183,7 @@
 
 - (NSDictionary*)createKeychainQueryForGenericPasswords
 {
-    NSDictionary *dictQueryParams = @{(__bridge id)kSecClassGenericPassword : (__bridge id)kSecClass,
+    NSDictionary *dictQueryParams = @{(__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
                                       (__bridge id)kSecMatchLimitAll : (__bridge id)kSecMatchLimit,
                                       (__bridge id)kSecReturnAttributes : (__bridge id)kCFBooleanTrue,
                                       (__bridge id)kSecReturnData : (__bridge id)kCFBooleanTrue};
@@ -223,10 +223,10 @@
     if(nil == resultDictionary) //result dictionary is nil
         return;
 
-    NSString* strAccount        = [FS_KA_Helper getAccountForSecItem:dictSecItemAttributes];
-    NSString* strService        = [FS_KA_Helper getServiceForSecItem:dictSecItemAttributes];
-    NSString* strGeneric        = [FS_KA_Helper getGenericForSecItem:dictSecItemAttributes];
-    NSString* strPassword       = [FS_KA_Helper getPasswordForSecItem:dictSecItemAttributes];
+    NSString* strAccount = [FS_KA_Helper getAccountForSecItem:dictSecItemAttributes];
+    NSString* strService = [FS_KA_Helper getServiceForSecItem:dictSecItemAttributes];
+    NSString* strGeneric = [FS_KA_Helper getGenericForSecItem:dictSecItemAttributes];
+    NSString* strPassword = [FS_KA_Helper getPasswordForSecItem:dictSecItemAttributes];
 
     [resultDictionary setValue:strAccount   forKey:kstrKeyAccount];
     [resultDictionary setValue:strService   forKey:kstrKeyService];
@@ -971,6 +971,7 @@
     CFArrayRef resultItems;
 
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)(queryParams), (CFTypeRef*)&resultItems);
+    
     if(errSecSuccess != status)
     {
         if (errSecItemNotFound == status)
