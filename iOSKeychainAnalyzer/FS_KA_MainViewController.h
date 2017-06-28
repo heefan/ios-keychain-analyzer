@@ -19,8 +19,6 @@
     NSMutableDictionary *keychainAnalysisResults;
 }
 
-@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
-
 #pragma mark - UI Events
 - (IBAction)exportKeychainData:(id)sender;
 - (IBAction)analyzeKeychainData:(id)sender;
@@ -45,83 +43,82 @@
                              toDictionary:(NSMutableDictionary *)resultDictionary;
 
 #pragma mark - Load Certificates
-- (void)            loadCertificates;
-- (NSDictionary*)   createKeychainQueryForCertificates;
-- (void)            addCertificates:                            (NSArray*               )resultItems;
-- (void)            addCertificateAttributesFrom:               (NSDictionary*          )dictSecItemAttributes
-                                    toDictionary:               (NSMutableDictionary*   )resultDictionary;
-- (void)            addCertificateSummaryForCertificateFrom:    (NSDictionary*          )dictSecItemAttributes
-                                               toDictionary:    (NSMutableDictionary*   )resultDictionary;
+- (void)loadCertificates;
+- (NSDictionary*)createKeychainQueryForCertificates;
+- (void)addCertificates:(NSArray*)resultItems;
+- (void)addCertificateAttributesFrom:(NSDictionary *)dictSecItemAttributes
+                        toDictionary:(NSMutableDictionary *)resultDictionary;
+- (void)addCertificateSummaryForCertificateFrom:(NSDictionary *)dictSecItemAttributes
+                                   toDictionary:(NSMutableDictionary *)resultDictionary;
 
 #pragma mark - Load Keys
-- (void)            loadKeys;
-- (NSDictionary*)   createKeychainQueryForKeys;
-- (void)            addKeys:                                    (NSArray*               )resultItems;
-- (void)            addKeyAttributesFrom:                       (NSDictionary*          )dictSecItemAttributes
-                            toDictionary:                       (NSMutableDictionary *  )resultDictionary;
+- (void)loadKeys;
+- (NSDictionary *)createKeychainQueryForKeys;
+- (void)addKeys: (NSArray *)resultItems;
+- (void)addKeyAttributesFrom:(NSDictionary *)dictSecItemAttributes
+                toDictionary:(NSMutableDictionary *)resultDictionary;
 #pragma mark - Load Identities
-- (void)            loadIdentities;
-- (NSDictionary*)   createKeychainQueryForIdentities;
-- (void)            addIdentities:                              (NSArray*               )resultItems;
-- (void)            addCertificateSummaryForIdentityFrom:       (NSDictionary*          )dictSecItemAttributes
-                                            toDictionary:       (NSMutableDictionary*   )resultDictionary;
+- (void)loadIdentities;
+- (NSDictionary *)createKeychainQueryForIdentities;
+- (void)addIdentities: (NSArray *)resultItems;
+- (void)addCertificateSummaryForIdentityFrom:(NSDictionary *)dictSecItemAttributes
+                                toDictionary:(NSMutableDictionary *)resultDictionary;
 #pragma mark - Export Keychain Data
-- (NSString*)       convertKeychainDataToJSONP;
-- (NSURL*)          createDataDirectory;
-- (NSURL*)          getDataDirectory;
-- (void)            copyDataViewerHTMLToDataDirectory:          (NSURL*                 )dataDir;
-- (void)            saveKeychainData:                           (NSString*              )strKeychainDataJSONP
-                         toReportDir:                           (NSURL*                 )dataDir;
+- (NSString *)convertKeychainDataToJSONP;
+- (NSURL*)createDataDirectory;
+- (NSURL*)getDataDirectory;
+- (void)copyDataViewerHTMLToDataDirectory: (NSURL *)dataDir;
+- (void)saveKeychainData:(NSString *)strKeychainDataJSONP
+             toReportDir:(NSURL *)dataDir;
 #pragma mark - Export Analysis Data
-- (NSString*)       convertstrAnalysisDataToJSONP;
-- (void)            copyAnalysisReportViewerHTMLToDataDirectory:(NSURL*                 )dataDir;
-- (void)            saveAnalysisData:                           (NSString*              )strAnalysisDataJSONP
-                         toReportDir:                           (NSURL*                 )dataDir;
+- (NSString*)convertstrAnalysisDataToJSONP;
+- (void)copyAnalysisReportViewerHTMLToDataDirectory:(NSURL *)dataDir;
+- (void)saveAnalysisData:(NSString *)strAnalysisDataJSONP
+             toReportDir:(NSURL *)dataDir;
 
 #pragma mark Analysis - Check for weak passwords
-- (void)            checkKeychainItemsForWeakPasswords;
-- (void)            checkGenericPasswordsForWeakPasswords:      (NSMutableArray*        )resultsArray;
-- (void)            checkInternetPasswordsForWeakPasswords:     (NSMutableArray*        )resultsArray;
-- (void)            checkForWeakPasswords:                      (NSArray*               )arrPasswords
-                                   ofType:                      (NSString*              )strPasswordType
-                          andAddToResults:                      (NSMutableArray*        )resultsArray;
+- (void)checkKeychainItemsForWeakPasswords;
+- (void)checkGenericPasswordsForWeakPasswords:(NSMutableArray *)resultsArray;
+- (void)checkInternetPasswordsForWeakPasswords:(NSMutableArray *)resultsArray;
+- (void)checkForWeakPasswords:(NSArray *)arrPasswords
+                       ofType:(NSString *)strPasswordType
+              andAddToResults:(NSMutableArray *)resultsArray;
 
 #pragma mark Analysis - Check for weak authentication scheme
-- (void)            checkKeychainItemsForWeakAuthScheme;
-- (void)            checkInternetPasswordsForWeakAuthScheme:    (NSMutableArray*        )weakAuthSchemeItems;
+- (void)checkKeychainItemsForWeakAuthScheme;
+- (void)checkInternetPasswordsForWeakAuthScheme:(NSMutableArray *)weakAuthSchemeItems;
 
 #pragma mark Analysis - Check for weak protocols
-- (void)            checkKeychainItemsForWeakProtocols;
-- (void)            checkInternetPasswordsForWeakProtocols:     (NSMutableArray*        )resultsArray;
+- (void)checkKeychainItemsForWeakProtocols;
+- (void)checkInternetPasswordsForWeakProtocols:(NSMutableArray *)resultsArray;
 
 #pragma mark - Common Functions
-- (NSArray*)        searchKeychainUsingQuery:                   (NSDictionary*          )queryParams;
-- (void)            addCommonAttributesFrom:                    (NSDictionary*          )dictSecItemAttributes
-                               toDictionary:                    (NSMutableDictionary*   )resultDictionary;
+- (NSArray*)searchKeychainUsingQuery:(NSDictionary *)queryParams;
+- (void)addCommonAttributesFrom:(NSDictionary *)dictSecItemAttributes
+                   toDictionary:(NSMutableDictionary *)resultDictionary;
 
 #pragma mark Analysis - Check for weak keys
-- (void)            checkKeychainItemsForWeakKeys;
-- (void)            checkKeysForWeakKeys:                       (NSMutableArray*        )resultsArray;
-- (void)            checkIdentitiesForWeakKeys:                 (NSMutableArray*        )resultsArray;
-- (void)            checkForWeakKeys:                           (NSArray*               )arrItems
-                              ofType:                           (NSString*              )strItemType
-                     andAddToResults:                           (NSMutableArray*        )resultsArray;
+- (void)checkKeychainItemsForWeakKeys;
+- (void)checkKeysForWeakKeys:(NSMutableArray *)resultsArray;
+- (void)checkIdentitiesForWeakKeys:(NSMutableArray *)resultsArray;
+- (void)checkForWeakKeys:(NSArray *)arrItems
+                  ofType:(NSString *)strItemType
+         andAddToResults:(NSMutableArray *)resultsArray;
 
 #pragma mark Analysis - Check for weak accessibility
-- (void)            checkKeychainItemsForInsecureAccessibility;
-- (void)            checkGenericPasswordsForWeakAccessibility:  (NSMutableArray*        )resultsArray;
-- (void)            checkInternetPasswordsForWeakAccessibility: (NSMutableArray*        )resultsArray;
-- (void)            checkCertificatesForWeakAccessibility:      (NSMutableArray*        )resultsArray;
-- (void)            checkKeysForWeakAccessibility:              (NSMutableArray*        )resultsArray;
-- (void)            checkIdentitiesForWeakAccessibility:        (NSMutableArray*        )resultsArray;
-- (void)            checkForWeakAccessibility:                  (NSArray*               )arrItems
-                                       ofType:                  (NSString*              )strItemType
-                              andAddToResults:                  (NSMutableArray*        )resultsArray;
+- (void)checkKeychainItemsForInsecureAccessibility;
+- (void)checkGenericPasswordsForWeakAccessibility:(NSMutableArray *)resultsArray;
+- (void)checkInternetPasswordsForWeakAccessibility:(NSMutableArray *)resultsArray;
+- (void)checkCertificatesForWeakAccessibility:(NSMutableArray *)resultsArray;
+- (void)checkKeysForWeakAccessibility: (NSMutableArray *)resultsArray;
+- (void)checkIdentitiesForWeakAccessibility: (NSMutableArray *)resultsArray;
+- (void)checkForWeakAccessibility:(NSArray *)arrItems
+                           ofType:(NSString *)strItemType
+                  andAddToResults:(NSMutableArray *)resultsArray;
 
 #pragma mark - Display Confirmation Dialog
-- (void)            launchConfirmationDialogForDataExport:      (BOOL                   )bErrorOccured;
-- (void)            launchConfirmationDialogForAnalysisReport:  (BOOL                   )bErrorOccured;
-- (void)            launchConfirmationDialogWithTitle:          (NSString*              )strTitle
-                                           andMessage:          (NSString*              )strMessage;
-
+- (void)launchConfirmationDialogForDataExport:(BOOL)bErrorOccured;
+- (void)launchConfirmationDialogForAnalysisReport:(BOOL)bErrorOccured;
+- (void)launchConfirmationDialogWithTitle:(NSString *)strTitle
+                               andMessage:(NSString *)strMessage;
 @end

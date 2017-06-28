@@ -29,7 +29,6 @@
 
 - (void)test_createKeychainQueryForGenericPassword
 {
-    NSDictionary * dic = [self createKeychainQueryForGenericPassword];
     
 
 }

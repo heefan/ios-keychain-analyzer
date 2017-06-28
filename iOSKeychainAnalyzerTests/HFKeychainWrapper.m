@@ -50,7 +50,8 @@ static const UInt8 kKeychainItemIdentifier[] = "com.apple.dts.KeychainUI\0";
         CFMutableDictionaryRef outDictionary = nil;
 
         // If the keychain item exists, return the attributes of the item:
-        keychainErr = SecItemCopyMatching((__bridge CFDictionaryRef)_genericPasswordQuery, (CFTypeRef *)&outDictionary);
+        keychainErr = SecItemCopyMatching((__bridge CFDictionaryRef)_genericPasswordQuery,\
+                                          (CFTypeRef *)&outDictionary);
 
         if (keychainErr == noErr) {
             // Convert the data dictionary into the format used by the view controller:
@@ -59,7 +60,9 @@ static const UInt8 kKeychainItemIdentifier[] = "com.apple.dts.KeychainUI\0";
             // Put default values into the keychain if no matching
             // keychain item is found:
             [self resetKeychainItem];
-            if (outDictionary) CFRelease(outDictionary);
+            
+            if (outDictionary)
+                CFRelease(outDictionary);
         } else {
             // Any other error is unexpected.
             NSAssert(NO, @"Serious error.\n");
@@ -226,15 +229,14 @@ static const UInt8 kKeychainItemIdentifier[] = "com.apple.dts.KeychainUI\0";
         // You can update only a single keychain item at a time.
         OSStatus errorcode = SecItemUpdate((__bridge CFDictionaryRef)updateItem,
                                            (__bridge CFDictionaryRef)tempCheck);
+        
         NSAssert(errorcode == noErr, @"Couldn't update the Keychain Item." );
-
     } else {
         // No previous item found; add the new item.
         // The new value was added to the _keychainData dictionary in the mySetObject routine,
         // and the other values were added to the _keychainData dictionary previously.
         // No pointer to the newly-added items is needed, so pass NULL for the second parameter:
-        OSStatus errorcode = SecItemAdd((__bridge CFDictionaryRef)[self dictionaryToSecItemFormat:_keychainData],
-                                        NULL);
+        OSStatus errorcode = SecItemAdd((__bridge CFDictionaryRef)[self dictionaryToSecItemFormat:_keychainData], NULL);
         NSAssert(errorcode == noErr, @"Couldn't add the Keychain Item." );
         if (attributes)
             CFRelease(attributes);

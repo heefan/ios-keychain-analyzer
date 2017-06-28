@@ -29,9 +29,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
     //[self setTitle:kstrMainViewTitle];
-
     bIsKeychainLoaded = NO;
 }
 
@@ -187,9 +185,8 @@
 {
     NSDictionary *dictQueryParams = @{(__bridge id)kSecClassGenericPassword : (__bridge id)kSecClass,
                                       (__bridge id)kSecMatchLimitAll : (__bridge id)kSecMatchLimit,
-                                      (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnAttributes,
-                                      (__bridge id)kCFBooleanTrue : (__bridge id)kSecReturnData
-                                     };
+                                      (__bridge id)kSecReturnAttributes : (__bridge id)kCFBooleanTrue,
+                                      (__bridge id)kSecReturnData : (__bridge id)kCFBooleanTrue};
 
     return dictQueryParams;
 }
