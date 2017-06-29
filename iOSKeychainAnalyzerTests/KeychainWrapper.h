@@ -17,5 +17,4 @@
 - (id)myObjectForKey:(id)key;
 - (void)resetKeychainItem;
 
-- (void)setGenericPassowrd:(NSString *)password forService:(NSString *)serviceName;
 @end

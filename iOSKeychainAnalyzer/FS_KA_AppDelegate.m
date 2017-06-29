@@ -8,6 +8,10 @@
 
 #import "FS_KA_AppDelegate.h"
 #import "FS_KA_MainViewController.h"
+#import "KeychainWrapper.h"
+
+#define BRIDGE_ID (__bridge id)
+static const UInt8 kKeychainItemIdentifier[]  = "com.apple.dts.KeychainUI\0";
 
 @implementation FS_KA_AppDelegate
 
@@ -28,7 +32,36 @@
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    
+    /* ----------- dummy data ------------- */
+    // Add generic password into keychain
     return YES;
+}
+
+- (NSMutableDictionary *)dictionaryToSecItemFormat:(NSDictionary *)dictionaryToConvert
+
+{
+    // This method must be called with a properly populated dictionary
+    // containing all the right key/value pairs for a keychain item search.
+    
+    // Create the return dictionary:
+    NSMutableDictionary *returnDictionary = [NSMutableDictionary dictionaryWithDictionary:dictionaryToConvert];
+    
+    // Add the keychain item class and the generic attribute:
+    NSData *keychainItemID = [NSData dataWithBytes:kKeychainItemIdentifier
+                                            length:strlen((const char *)kKeychainItemIdentifier)];
+    
+    [returnDictionary setObject:keychainItemID forKey:(__bridge id)kSecAttrGeneric];
+    
+    [returnDictionary setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
+    
+    // Convert the password NSString to NSData to fit the API paradigm:
+    NSString *passwordString = [dictionaryToConvert objectForKey:(__bridge id)kSecValueData];
+    [returnDictionary setObject:[passwordString dataUsingEncoding:NSUTF8StringEncoding]
+                         forKey:(__bridge id)kSecValueData];
+    
+    return returnDictionary;
+    
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
