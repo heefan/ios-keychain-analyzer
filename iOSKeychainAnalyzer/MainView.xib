@@ -49,7 +49,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="10">
-                    <rect key="frame" x="20" y="354" width="45" height="30"/>
+                    <rect key="frame" x="138" y="351" width="45" height="30"/>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                     <state key="normal" title="About">
                         <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -65,8 +65,8 @@
             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
             <constraints>
                 <constraint firstItem="5" firstAttribute="centerX" secondItem="1" secondAttribute="centerX" id="0HE-m9-z30"/>
-                <constraint firstItem="5" firstAttribute="leading" secondItem="10" secondAttribute="leading" id="4C0-5z-nti"/>
-                <constraint firstAttribute="bottom" secondItem="10" secondAttribute="bottom" constant="32" id="4WN-F1-5YD"/>
+                <constraint firstItem="5" firstAttribute="leading" secondItem="10" secondAttribute="leading" constant="-118" id="4C0-5z-nti"/>
+                <constraint firstAttribute="bottom" secondItem="10" secondAttribute="bottom" constant="35" id="4WN-F1-5YD"/>
                 <constraint firstItem="5" firstAttribute="leading" secondItem="6" secondAttribute="leading" id="F3b-So-MZI"/>
                 <constraint firstItem="5" firstAttribute="trailing" secondItem="6" secondAttribute="trailing" id="dM4-d2-F0Q"/>
                 <constraint firstItem="5" firstAttribute="top" secondItem="1" secondAttribute="top" constant="127" id="plh-8U-p01"/>

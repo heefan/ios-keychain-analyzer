@@ -28,8 +28,8 @@
 		02D5F692160FEAD400561531 /* iOSKeychainAnalysisReportViewer.htm in Resources */ = {isa = PBXBuildFile; fileRef = 02D5F691160FEAD400561531 /* iOSKeychainAnalysisReportViewer.htm */; };
 		02D5F694160FFD9800561531 /* fs_header_image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 02D5F693160FFD9800561531 /* fs_header_image.jpg */; };
 		0F8463531EFCD02700B617AF /* Test_FS_KA_MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F8463521EFCD02700B617AF /* Test_FS_KA_MainViewController.m */; };
-		0F8463571EFD074700B617AF /* KeychainWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F8463561EFD074700B617AF /* KeychainWrapper.m */; };
 		0FF881B61EF2546A005ACC8B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FF881B51EF2546A005ACC8B /* Default-568h@2x.png */; };
+		58BAFB401F05F767007D258D /* KeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 58BAFB3F1F05F767007D258D /* KeychainItemWrapper.m */; };
 		A1F706D969EFCD684BB3C7C3 /* libPods-iOSKeychainAnalyzerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07E83B6AF933BF0A6F0E85D6 /* libPods-iOSKeychainAnalyzerTests.a */; };
 /* End PBXBuildFile section */
 
@@ -76,11 +76,12 @@
 		07E83B6AF933BF0A6F0E85D6 /* libPods-iOSKeychainAnalyzerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iOSKeychainAnalyzerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F8463521EFCD02700B617AF /* Test_FS_KA_MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test_FS_KA_MainViewController.m; sourceTree = "<group>"; };
 		0F8463541EFCE6EA00B617AF /* TestConstant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestConstant.h; sourceTree = "<group>"; };
-		0F8463551EFD074700B617AF /* KeychainWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeychainWrapper.h; path = iOSKeychainAnalyzerTests/KeychainWrapper.h; sourceTree = SOURCE_ROOT; };
-		0F8463561EFD074700B617AF /* KeychainWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeychainWrapper.m; path = iOSKeychainAnalyzerTests/KeychainWrapper.m; sourceTree = SOURCE_ROOT; };
 		0FC149691EF81DAF009298EF /* iOSKeychainAnalyzerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iOSKeychainAnalyzerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FC1496D1EF81DAF009298EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0FF881B51EF2546A005ACC8B /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
+		58BAFB3E1F05F767007D258D /* KeychainItemWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainItemWrapper.h; sourceTree = "<group>"; };
+		58BAFB3F1F05F767007D258D /* KeychainItemWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeychainItemWrapper.m; sourceTree = "<group>"; };
+		58BAFB411F063D41007D258D /* HFHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HFHelper.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,8 +141,8 @@
 		02340D0615FD120300623A3A /* iOSKeychainAnalyzer */ = {
 			isa = PBXGroup;
 			children = (
-				0F8463551EFD074700B617AF /* KeychainWrapper.h */,
-				0F8463561EFD074700B617AF /* KeychainWrapper.m */,
+				58BAFB3E1F05F767007D258D /* KeychainItemWrapper.h */,
+				58BAFB3F1F05F767007D258D /* KeychainItemWrapper.m */,
 				02C3E3DF1661399300D7CF8D /* Resources */,
 				02D5F68D160FEA2500561531 /* Report_HTML_Documents */,
 				02340D0F15FD120300623A3A /* FS_KA_AppDelegate.h */,
@@ -160,6 +161,7 @@
 				02C3E3EB16617B4600D7CF8D /* FS_KA_AboutDialogViewController.h */,
 				02C3E3EC16617B4600D7CF8D /* FS_KA_AboutDialogViewController.m */,
 				02340D0715FD120300623A3A /* Supporting Files */,
+				58BAFB411F063D41007D258D /* HFHelper.h */,
 			);
 			path = iOSKeychainAnalyzer;
 			sourceTree = "<group>";
@@ -369,6 +371,7 @@
 				02340D1115FD120300623A3A /* FS_KA_AppDelegate.m in Sources */,
 				027AA6D415FE7B1D003751DD /* FS_KA_MainViewController.m in Sources */,
 				02507E531602BC3900156850 /* FS_KA_Helper.m in Sources */,
+				58BAFB401F05F767007D258D /* KeychainItemWrapper.m in Sources */,
 				023761D11605096D00CBF68C /* FS_KA_Constants.m in Sources */,
 				023411D71620805B0012A485 /* FS_KA_ConfirmationDialogViewController.m in Sources */,
 				02C3E3ED16617B4600D7CF8D /* FS_KA_AboutDialogViewController.m in Sources */,
@@ -379,7 +382,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0F8463571EFD074700B617AF /* KeychainWrapper.m in Sources */,
 				0F8463531EFCD02700B617AF /* Test_FS_KA_MainViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -484,7 +486,9 @@
 		02340D1515FD120300623A3A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = AX7SV79V34;
+				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iOSKeychainAnalyzer/iOSKeychainAnalyzer-Prefix.pch";
 				INFOPLIST_FILE = "iOSKeychainAnalyzer/iOSKeychainAnalyzer-Info.plist";
@@ -499,7 +503,9 @@
 		02340D1615FD120300623A3A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = AX7SV79V34;
+				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iOSKeychainAnalyzer/iOSKeychainAnalyzer-Prefix.pch";
 				INFOPLIST_FILE = "iOSKeychainAnalyzer/iOSKeychainAnalyzer-Info.plist";

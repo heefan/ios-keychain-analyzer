@@ -8,16 +8,25 @@
 
 #import "FS_KA_AppDelegate.h"
 #import "FS_KA_MainViewController.h"
-#import "KeychainWrapper.h"
+#import "KeychainItemWrapper.h"
 
 #define BRIDGE_ID (__bridge id)
-static const UInt8 kKeychainItemIdentifier[]  = "com.apple.dts.KeychainUI\0";
 
 @implementation FS_KA_AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+ 
+    
+    /* ----------- dummy data ------------- */
+    // Add generic password into keychain
+    KeychainItemWrapper * wrapper = [[KeychainItemWrapper alloc] initWithIdentifier:@"dummy_identifier" accessGroup:@"dummy_group"];
+    [wrapper setObject:@"shittypassword" forKey:(BRIDGE_ID kSecValueData)];
+    
+    NSString * password = [wrapper objectForKey:(BRIDGE_ID kSecValueData)];
+    NSAssert([password isEqualToString:@"shittypassword"] == YES, @"dummy password should be shittypassword");
+    
     
     // Override point for customization after application launch.
     //      Create a view controller for our main view
@@ -25,43 +34,13 @@ static const UInt8 kKeychainItemIdentifier[]  = "com.apple.dts.KeychainUI\0";
     //      Set our window visible and make it the main window so that the user can interact with it
     //
     FS_KA_MainViewController *mainViewController = [[FS_KA_MainViewController alloc]initWithNibName:@"MainView" bundle:nil];
-    //[[self window] setRootViewController:mainViewController];
     
     UINavigationController* navController = [[UINavigationController alloc] initWithRootViewController:mainViewController];
     [[self window] setRootViewController:navController];
-    
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
-    /* ----------- dummy data ------------- */
-    // Add generic password into keychain
     return YES;
-}
-
-- (NSMutableDictionary *)dictionaryToSecItemFormat:(NSDictionary *)dictionaryToConvert
-
-{
-    // This method must be called with a properly populated dictionary
-    // containing all the right key/value pairs for a keychain item search.
-    
-    // Create the return dictionary:
-    NSMutableDictionary *returnDictionary = [NSMutableDictionary dictionaryWithDictionary:dictionaryToConvert];
-    
-    // Add the keychain item class and the generic attribute:
-    NSData *keychainItemID = [NSData dataWithBytes:kKeychainItemIdentifier
-                                            length:strlen((const char *)kKeychainItemIdentifier)];
-    
-    [returnDictionary setObject:keychainItemID forKey:(__bridge id)kSecAttrGeneric];
-    
-    [returnDictionary setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
-    
-    // Convert the password NSString to NSData to fit the API paradigm:
-    NSString *passwordString = [dictionaryToConvert objectForKey:(__bridge id)kSecValueData];
-    [returnDictionary setObject:[passwordString dataUsingEncoding:NSUTF8StringEncoding]
-                         forKey:(__bridge id)kSecValueData];
-    
-    return returnDictionary;
-    
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

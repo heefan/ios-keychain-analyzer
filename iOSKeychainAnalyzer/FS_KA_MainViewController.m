@@ -11,6 +11,7 @@
 #import "FS_KA_MainViewController.h"
 #import "FS_KA_Helper.h"
 #import "FS_KA_Constants.h"
+#import "HFHelper.h"
 
 @interface FS_KA_MainViewController ()
 
@@ -169,9 +170,9 @@
 - (void)loadGenericPasswords
 {
     NSDictionary* queryParamsGenericPasswords = [self createKeychainQueryForGenericPasswords];
-    NSLog(@"query dic: %@", queryParamsGenericPasswords);
+    HFLog(@"query dic: %@", queryParamsGenericPasswords);
 
-    NSArray* resultItems = [self searchKeychainUsingQuery:queryParamsGenericPasswords];
+    NSArray * resultItems = [self searchKeychainUsingQuery:queryParamsGenericPasswords];
 
     if (nil == resultItems) //Either no items found or an error occured. Either way do not proceed
         return;
@@ -191,19 +192,19 @@
     return dictQueryParams;
 }
 
-- (void)addGenericPasswords:(NSArray*)resultItems
+- (void)addGenericPasswords:(NSArray *)resultItems
 {
     NSMutableArray *keychainGenericPasswords = [[NSMutableArray alloc] initWithCapacity:kInitialNumOfGenericPasswords];
 
     for (unsigned int uiIndex = 0; uiIndex < [resultItems count]; uiIndex++)
     {
-        NSMutableDictionary *dictReadableSecItemAttributes = [[NSMutableDictionary alloc] initWithCapacity:kNumOfAttributesPerKeychainItem];
+      //  NSMutableDictionary *dictReadableSecItemAttributes = [[NSMutableDictionary alloc] initWithCapacity:kNumOfAttributesPerKeychainItem];
 
-        NSDictionary *dictSecItemAttributes = (NSDictionary *)([resultItems objectAtIndex:uiIndex]);
+      //  NSDictionary *dictSecItemAttributes = (NSDictionary *)([resultItems objectAtIndex:uiIndex]);
 
-        [self addCommonAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        [self addGenericPasswordAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        [keychainGenericPasswords addObject:dictReadableSecItemAttributes];
+      //  [self addCommonAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
+      //  [self addGenericPasswordAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
+      //  [keychainGenericPasswords addObject:dictReadableSecItemAttributes];
     }
 
     [allKeychainItems setObject:keychainGenericPasswords forKey:kstrKeyGenericPasswords];
@@ -240,7 +241,7 @@
 - (void)loadInternetPasswords
 {
     NSDictionary* queryParamsInternetPasswords = [self createKeychainQueryForInternetPasswords];
-    NSArray* resultItems = [self searchKeychainUsingQuery:queryParamsInternetPasswords];
+    NSArray * resultItems = [self searchKeychainUsingQuery:queryParamsInternetPasswords];
 
     if (nil == resultItems) //Either no items found or an error occured. Either way do not proceed
         return;
@@ -261,21 +262,21 @@
 
 }
 
-- (void) addInternetPasswords:(NSArray*)resultItems
+- (void) addInternetPasswords:(NSDictionary*)resultItems
 {
     NSMutableArray *keychainInternetPasswords = [[NSMutableArray alloc] initWithCapacity:kInitialNumOfInternetPasswords];
 
     for (unsigned int uiIndex = 0; uiIndex < [resultItems count]; uiIndex++)
     {
-        NSMutableDictionary *dictReadableSecItemAttributes
-            = [[NSMutableDictionary alloc] initWithCapacity:kNumOfAttributesPerKeychainItem];
+      //  NSMutableDictionary *dictReadableSecItemAttributes
+      //      = [[NSMutableDictionary alloc] initWithCapacity:kNumOfAttributesPerKeychainItem];
 
-        NSDictionary *dictSecItemAttributes = (NSDictionary *)([resultItems objectAtIndex:uiIndex]);
+      //  NSDictionary *dictSecItemAttributes = (NSDictionary *)([resultItems objectAtIndex:uiIndex]);
 
-        [self addCommonAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
-        [self addInternetPasswordAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
+      //  [self addCommonAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
+      //  [self addInternetPasswordAttributesFrom:dictSecItemAttributes toDictionary:dictReadableSecItemAttributes];
 
-        [keychainInternetPasswords addObject:dictReadableSecItemAttributes];
+      //  [keychainInternetPasswords addObject:dictReadableSecItemAttributes];
     }
 
     [allKeychainItems setObject:keychainInternetPasswords forKey:kstrKeyInternetPasswords];
@@ -966,12 +967,12 @@
 }
 
 #pragma mark - Common Functions
-- (NSArray*)searchKeychainUsingQuery:(NSDictionary*)queryParams
+- (NSDictionary *)searchKeychainUsingQuery:(NSDictionary*)queryParams
 {
-    CFArrayRef resultItems;
+    NSDictionary * resultItems;
 
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)(queryParams), (CFTypeRef*)&resultItems);
-    
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)(queryParams), (void*)&resultItems);
+
     if(errSecSuccess != status)
     {
         if (errSecItemNotFound == status)
@@ -982,8 +983,9 @@
         return nil;
     }
 
-    NSArray *nsResults = (__bridge NSArray *)(resultItems);
+    NSDictionary *nsResults = [resultItems copy];
 
+    HFLog(@"search result : %@", nsResults);
     return nsResults;
 }
 
