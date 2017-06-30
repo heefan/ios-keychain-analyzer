@@ -967,7 +967,7 @@
 }
 
 #pragma mark - Common Functions
-- (NSDictionary *)searchKeychainUsingQuery:(NSDictionary*)queryParams
+- (NSArray *)searchKeychainUsingQuery:(NSDictionary*)queryParams
 {
     NSDictionary * resultItems;
 
@@ -983,7 +983,7 @@
         return nil;
     }
 
-    NSDictionary *nsResults = [resultItems copy];
+    NSArray *nsResults = [resultItems copy];
 
     HFLog(@"search result : %@", nsResults);
     return nsResults;

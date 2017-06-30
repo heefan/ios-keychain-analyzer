@@ -17,29 +17,27 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
- 
-    
-    /* ----------- dummy data ------------- */
+
+    /* ----------- dummy data  1 ------------- */
     // Add generic password into keychain
-    KeychainItemWrapper * wrapper = [[KeychainItemWrapper alloc] initWithIdentifier:@"dummy_identifier" accessGroup:@"dummy_group"];
-    [wrapper setObject:@"shittypassword" forKey:(BRIDGE_ID kSecValueData)];
-    
-    NSString * password = [wrapper objectForKey:(BRIDGE_ID kSecValueData)];
-    NSAssert([password isEqualToString:@"shittypassword"] == YES, @"dummy password should be shittypassword");
-    
-    
+    KeychainItemWrapper * wrapper1 = [[KeychainItemWrapper alloc] initWithIdentifier:@"dummy_identifier" accessGroup:@"dummy_group"];
+    [wrapper1 setObject:@"shittypassword" forKey:(BRIDGE_ID kSecValueData)];
+
+    NSString * password1 = [wrapper1 objectForKey:(BRIDGE_ID kSecValueData)];
+    NSAssert([password1 isEqualToString:@"shittypassword"] == YES, @"dummy password should be shittypassword");
+
     // Override point for customization after application launch.
     //      Create a view controller for our main view
     //      Set this newly created view controller as the root view controller of the app window
     //      Set our window visible and make it the main window so that the user can interact with it
     //
     FS_KA_MainViewController *mainViewController = [[FS_KA_MainViewController alloc]initWithNibName:@"MainView" bundle:nil];
-    
+
     UINavigationController* navController = [[UINavigationController alloc] initWithRootViewController:mainViewController];
     [[self window] setRootViewController:navController];
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
-    
+
     return YES;
 }
 
